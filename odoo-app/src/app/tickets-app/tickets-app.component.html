@@ -1,7 +1,7 @@
 <section class="ticketapp">
   <header class="header">
     <h1>{{message}}</h1>
-    <input class="new-ticket" placeholder="What needs to be done?" autofocus="" [(ngModel)]="newTicket.client" (keyup.enter)="addTicket()">
+    <input class="new-ticket" placeholder="Client" autofocus="" [(ngModel)]="newTicket.client" (keyup.enter)="addTicket()">
     <input class="new-ticket" placeholder="Amount" autofocus="" [(ngModel)]="newTicket.amount" (keyup.enter)="addTicket()"/>
     <input class="new-ticket" placeholder="Date" autofocus="" [(ngModel)]="newTicket.date" (keyup.enter)="addTicket()"/>
   </header>
