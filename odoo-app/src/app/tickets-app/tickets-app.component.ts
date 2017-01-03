@@ -3,6 +3,9 @@ import { Tickets } from '../tickets';
 import { TicketsService } from '../tickets.service';
 import { FormControl, FormGroup } from '@angular/forms';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+//import { NgModule } from "@angular/core";
+//import { RouterModule, Routes } from '@angular/router';
+//import { AboutComponent } from '../about/about.component';
 
 @Component({
   selector: "tickets-app",
@@ -10,9 +13,11 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
   styleUrls: ["./tickets-app.component.css"],
   providers: [TicketsService]
 })
+
+
 export class TicketsAppComponent implements OnInit {
 
-  message = "Hi from tickets component"
+  message = "Tickets"
   newTicket: Tickets = new Tickets();
 
   constructor(private ticketsService: TicketsService) {

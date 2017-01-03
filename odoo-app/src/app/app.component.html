@@ -1,4 +1,24 @@
-<h1>
-  {{title}}
-</h1>
-<tickets-app></tickets-app>
+<nav class="navbar navbar-inverse navbar-fixed-top">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+      <span class="sr-only">Toggle navigation</span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" routerLink="/" routerLinkActive="active">{{title}}</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+        <ul class="nav navbar-nav navbar-right">
+        <li ><a routerLink="/" routerLinkActive="active">Inicio</a></li>
+        <li><a routerLink="/clientes" routerLinkActive="active">Clientes</a></li>
+        <li><a routerLink="/productos" routerLinkActive="active">Productos</a></li>
+        <li><a routerLink="/conexion" routerLinkActive="active">Ingresar</a></li>
+        </ul>
+    </div>
+  </div>
+</nav>
+<div id="main" class="container">
+  <router-outlet></router-outlet>
+</div>
