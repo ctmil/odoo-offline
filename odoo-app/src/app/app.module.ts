@@ -17,6 +17,7 @@ import { HomeComponent } from './home/home.component';
 import { AboutComponent } from './about/about.component';
 import { PageNotFoundComponent } from './not-found.component';
 import { LoginComponent }       from './login.component';
+import { LocalStorageModule } from 'angular-2-local-storage';
 
 @NgModule({
   declarations: [
@@ -31,6 +32,10 @@ import { LoginComponent }       from './login.component';
     LoginComponent
   ],
   imports: [
+    LocalStorageModule.withConfig({
+            prefix: 'odoo-app',
+            storageType: 'localStorage'
+        }),
     AppRoutingModule,
     LoginRoutingModule,
     BrowserModule,
