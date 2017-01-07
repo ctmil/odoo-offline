@@ -1,3 +1,71 @@
-<p>
-  productos works!
-</p>
+     <div id="top" class="row">
+
+		    <div class="col-md-3">
+		        <h2>{{message}}</h2>
+		    </div>
+
+		    <div class="col-md-6">
+		        <div class="input-group h2">
+		            <input name="data[search]" class="form-control" id="search" type="text" placeholder="Buscar Productos">
+		            <span class="input-group-btn">
+                		<button class="btn btn-primary" type="submit">
+		                    <span class="glyphicon glyphicon-search"></span>
+                		</button>
+		            </span>
+		        </div>
+		    </div>
+
+	     </div> <!-- /#top -->
+
+	     <hr>
+	     <div id="list" class="row">
+		   <div class="table-responsive col-md-12">
+		        <table class="table table-striped" cellspacing="0" cellpadding="0">
+		            <thead>
+                		<tr>
+		                    <th>Código</th>
+                		    <th>Nombre</th>
+		                    <th>Categoria</th>
+		                    <th>Stock</th>
+		                 </tr>
+		            </thead>
+		            <tbody>
+                		<tr>
+		                    <td>1001</td>
+                		    <td>Lorem ipsum dolor sit amet, consectetur adipiscing</td>
+		                    <td>Colchones</td>
+                		    <td>20</td>
+		                </tr>
+                		<tr>
+		                    <td>1002</td>
+                		    <td>Lorem ipsum dolor sit amet, consectetur adipiscing</td>
+		                    <td>Colchones</td>
+                		    <td>3</td>
+		                </tr>
+                		<tr>
+		                    <td>1003</td>
+                		    <td>Lorem ipsum dolor sit amet, consectetur adipiscing</td>
+		                    <td>Camas</td>
+                		    <td>12</td>
+		                </tr>
+		            </tbody>
+		         </table>
+		     </div>
+	     </div> <!-- /#list -->
+
+	     <div id="bottom" class="row">
+
+		    <div class="col-md-12">
+
+		        <ul class="pagination">
+		            <li class="disabled"><a>&lt; Anterior</a></li>
+		            <li class="disabled"><a>1</a></li>
+		            <li><a href="#">2</a></li>
+		            <li><a href="#">3</a></li>
+		            <li class="next"><a href="#" rel="next">Próximo &gt;</a></li>
+		        </ul><!-- /.pagination -->
+
+		    </div>
+
+	     </div> <!-- /#bottom -->
+

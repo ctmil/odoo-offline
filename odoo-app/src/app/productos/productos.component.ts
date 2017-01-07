@@ -7,6 +7,8 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ProductosComponent implements OnInit {
 
+  message = "Productos (in sync)"
+
   constructor() { }
 
   ngOnInit() {
