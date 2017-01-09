@@ -7,7 +7,8 @@ import { ClientesService } from '../clientes.service';
 @Component({
   selector: 'app-clientes',
   templateUrl: './clientes.component.html',
-  styleUrls: ['./clientes.component.css']
+  styleUrls: ['./clientes.component.css'],
+  providers: [ClientesService]
 })
 export class ClientesComponent implements OnInit {
 
@@ -36,7 +37,9 @@ export class ClientesComponent implements OnInit {
         'test1': { name: 'test1 ' },
         'test2': { name: 'test2' }
       };*/
-    return {};
+    var res_partner = this.Con.getTableAsArray("res.partner");
+    console.log("calling get clientes >", res_partner);
+    return res_partner;
   }
 
   ngOnInit() {

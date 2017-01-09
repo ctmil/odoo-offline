@@ -3,6 +3,9 @@
 import { Component, OnInit } from '@angular/core';
 import { LocalStorageService } from 'angular-2-local-storage';
 
+import {Cliente} from '../cliente';
+import { ClientesService } from '../clientes.service';
+
 //import { homedir } from '@os-homedir';
 //import { odoo } from 'node-odoo';
 //var Odoo = require('node-odoo');
@@ -124,6 +127,16 @@ export class ConexionComponent implements OnInit {
     return table_hash;
   }
 
+  getTableAsArray(table_id) {
+    var table_hash = this.getTable(table_id);
+    var table_array : Cliente[] = [];
+    for (var key_id in table_hash) {
+      table_array.push(table_hash[key_id]);
+    }
+    return table_array;
+
+  }
+
   setTable(table_id, table_hash) {
     //var table_hash_string = JSON.stringify(table_hash);
     var table_hash_string = table_hash;
@@ -138,7 +151,7 @@ export class ConexionComponent implements OnInit {
           console.log('Connected to Odoo server.');
           var inParams = [];
           inParams.push([['is_company', '=', true],['customer', '=', true]]);
-          inParams.push(['name', 'country_id', 'comment']); //fields
+          inParams.push(['name', 'phone', 'email', 'comment']); //fields
           inParams.push(0); //offset
           inParams.push(5); //limit
           var params = [];

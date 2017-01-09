@@ -29,8 +29,8 @@
                 		<tr>
 		                    <th>ID</th>
                 		    <th>Nombre</th>
-		                    <th>Tipo Documento</th>
-                		    <th>Nro Documento</th>
+		                    <th>Phone</th>
+                		    <th>Email</th>
 		                    <th class="actions">Ações</th>
 		                 </tr>
 		            </thead>
@@ -38,8 +38,8 @@
                 		<tr *ngFor="let client of clientes">
 		                    <td>{{id}}</td>
                 		    <td>{{client.name}}</td>
-		                    <td>{{client.name}} $</td>
-                		    <td>{{client.name}}</td>
+		                    <td>{{client.phone}}</td>
+                		    <td>{{client.email}}</td>
 		                    <td class="actions">
                 		        <a class="btn btn-success btn-xs" href="view.html">Ver</a>
 		                        <a class="btn btn-warning btn-xs" href="edit.html">Editar</a>
