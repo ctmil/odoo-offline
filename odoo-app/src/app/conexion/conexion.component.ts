@@ -143,7 +143,14 @@ export class ConexionComponent implements OnInit {
     this.setItem(table_id, table_hash_string );
   }
 
-  fetchPartners( callback ) {
+  fetchPartners(callback) {
+    this.fetchOdooTable("res.partner",
+      [['is_company', '=', true], ['customer', '=', true]],
+      ['name', 'phone', 'email', 'comment'],
+      0,
+      5,
+      callback);
+    /*
       var Osx = this.Ox;
       var self = this;
       Osx.connect(function (err) {
@@ -163,6 +170,48 @@ export class ConexionComponent implements OnInit {
                 console.log('Record: rec:', rec, value[rec]);
                 var record = value[rec];
                 self.setTableRecord("res.partner", record['name'], record);
+              }
+
+              if (callback) callback();
+          });
+      });
+*/
+  }
+
+  fetchProducts(callback) {
+    this.fetchOdooTable("product.product",
+      [],//['is_company', '=', true], ['customer', '=', true]
+      ['name','default_code','lst_price','qty_available'],
+      0,
+      5,
+      callback);
+  }
+
+  // table_id = 'res.partner'
+  // search_params = [['is_company', '=', true],['customer', '=', true]]
+  // search_fields = ['name', 'phone', 'email', 'comment']
+  // offset = 0
+  // limit = 5
+  fetchOdooTable( table_id, search_params, search_fields, offset, limit, callback ) {
+      var Osx = this.Ox;
+      var self = this;
+      Osx.connect(function (err) {
+          if (err) { return console.log(err); }
+          console.log('Connected to Odoo server.');
+          var inParams = [];
+          inParams.push(search_params);
+          inParams.push(search_fields); //fields
+          inParams.push(offset); //offset
+          inParams.push(limit); //limit
+          var params = [];
+          params.push(inParams);
+          Osx.execute_kw( table_id, 'search_read', params, function (err, value) {
+              if (err) { return console.log(err); }
+              console.log('Result: ', value);
+              for ( var rec in value) {
+                console.log('Record: rec:', rec, value[rec]);
+                var record = value[rec];
+                self.setTableRecord( table_id, record['name'], record);
               }
 
               if (callback) callback();

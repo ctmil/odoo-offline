@@ -25,28 +25,21 @@
                 		<tr>
 		                    <th>Código</th>
                 		    <th>Nombre</th>
-		                    <th>Categoria</th>
+		                    <th>Precio</th>
 		                    <th>Stock</th>
 		                 </tr>
 		            </thead>
-		            <tbody>
-                		<tr>
-		                    <td>1001</td>
-                		    <td>Lorem ipsum dolor sit amet, consectetur adipiscing</td>
-		                    <td>Colchones</td>
-                		    <td>20</td>
-		                </tr>
-                		<tr>
-		                    <td>1002</td>
-                		    <td>Lorem ipsum dolor sit amet, consectetur adipiscing</td>
-		                    <td>Colchones</td>
-                		    <td>3</td>
-		                </tr>
-                		<tr>
-		                    <td>1003</td>
-                		    <td>Lorem ipsum dolor sit amet, consectetur adipiscing</td>
-		                    <td>Camas</td>
-                		    <td>12</td>
+		            <tbody *ngIf="productos.length > 0">
+                		<tr *ngFor="let producto of productos">
+		                    <td>{{producto.default_code}}</td>
+                		    <td>{{producto.name}}</td>
+		                    <td>{{producto.lst_price}} $</td>
+                		    <td>{{producto.qty_available}}1</td>
+		                    <td class="actions">
+                		        <a class="btn btn-success btn-xs" href="view.html">Ver</a>
+		                        <a class="btn btn-warning btn-xs" href="edit.html">Editar</a>
+		                    </td>
+				                <td>Sincronizado <span align="right"><i class="fa fa-rss" aria-hidden="true"></i></span></td>
 		                </tr>
 		            </tbody>
 		         </table>
