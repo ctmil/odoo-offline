@@ -2,7 +2,7 @@
 Odoo Angular 2 App for offline tickets, products and clients sync
 
 ##Installing
-./install.sh
+`./install.sh`
 
 ##Run
-./run.sh
+`./run.sh`
