@@ -27,7 +27,7 @@ export class ClientesComponent implements OnInit {
         count += 1;
       }
       self.message = "Clientes (" + count + ")";
-      console.log(self.message);
+      //console.log(self.message);
     } );
 
   }

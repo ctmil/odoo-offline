@@ -28,7 +28,7 @@ export class ProductosComponent implements OnInit {
         count += 1;
       }
       self.message = "Productos (" + count + ")";
-      console.log(self.message);
+      //console.log(self.message);
     } );
 
   }

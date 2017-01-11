@@ -3,19 +3,20 @@
 			<div class="col-md-3">
 			</div>
 			<div class="col-md-6">
-			        <label for="inputEmail" class="sr-only">Usuario</label>
-			        <input type="host" id="inputHost" class="form-control" placeholder="Servidor" required>
-			        <input type="port" id="inputPort" class="form-control" placeholder="Puerto" required>
-			        <input type="database" id="inputDatabase" class="form-control" placeholder="Base de datos" required>
-			        <input type="email" id="inputEmail" class="form-control" placeholder="Usuario" required autofocus>
+			        <label for="inputEmail" class="sr-only">Datos de conexión</label>
+			        <input type="host" [(ngModel)]="ConnData.host" id="inputHost" class="form-control" placeholder="Servidor" required>
+			        <input type="port" [(ngModel)]="ConnData.port" id="inputPort" class="form-control" placeholder="Puerto" required>
+			        <input type="database" [(ngModel)]="ConnData.database" id="inputDatabase" class="form-control" placeholder="Base de datos" required>
+			        <input type="email" [(ngModel)]="ConnData.username" id="inputEmail" class="form-control" placeholder="Usuario" required autofocus>
 	        		<label for="inputPassword" class="sr-only">Password</label>
-		        	<input type="password" id="inputPassword" class="form-control" placeholder="Password" required>
+		        	<input type="password" [(ngModel)]="ConnData.password" id="inputPassword" class="form-control" placeholder="Password" required>
 			        <div class="checkbox">
         			  <label>
 			            <input type="checkbox" value="remember-me"> Recordarme
 		        	  </label>
 	        		</div>
-			        <button class="btn btn-lg btn-primary btn-block" type="submit">Ingresar</button>
+			        <button class="btn btn-lg btn-primary btn-block" type="submit" (click)="Conectar(ConnData);">Conectar</button>
+              <button class="btn btn-lg btn-primary btn-block" type="submit" (click)="cleanConexionData();">Clean</button>
 			</div>
 			<div class="col-md-3">
 			</div>

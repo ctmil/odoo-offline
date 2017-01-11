@@ -45,4 +45,7 @@ import { LocalStorageModule } from 'angular-2-local-storage';
   providers: [],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {
+
+
+ }

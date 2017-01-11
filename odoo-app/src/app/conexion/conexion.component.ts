@@ -3,8 +3,9 @@
 import { Component, OnInit } from '@angular/core';
 import { LocalStorageService } from 'angular-2-local-storage';
 
-import {Cliente} from '../cliente';
+import { Cliente } from '../cliente';
 import { ClientesService } from '../clientes.service';
+import { ConexionData } from '../conexion-data'
 
 //import { homedir } from '@os-homedir';
 //import { odoo } from 'node-odoo';
@@ -27,44 +28,41 @@ var odooxmlrpc = require('odoo-xmlrpc');
   templateUrl: './conexion.component.html',
   styleUrls: ['./conexion.component.css']
 })
+
 export class ConexionComponent implements OnInit {
 
   message = "Por favor conéctese."
-  /*
-  host = 'moldeo.coop'
-  port = ''
-  database = 'ctmil_v8_0'
-  username = 'fabricio.costa'
-  password = '1984dc'
-  */
-  host = 'localhost'
-  port = '8069'
-  database = 'odoo'
-  username = 'admin'
-  password = 'moldeonet'
 
-  self = this
-  uid = null
-  sid = null
-  session_id = null
-  context = null
+  ConnData: ConexionData = new ConexionData({
+    host: "",
+    port: "",
+    database: "",
+    username: "",
+    password: ""
+  });
 
-  Ox = new odooxmlrpc({
-        url: this.host,
-        port: this.port,
-        db: this.database,
-        username: this.username,
-        password: this.password
-      });
+  Ox = new odooxmlrpc({});
 
-  //lSS : LocalStorageService;
- /* odooconexion = new Odoo({
-    host: 'localhost',
-    port: 4569,
-    database: '4yopping',
-    username: 'admin',
-    password: '4yopping'
-  });*/
+
+  constructor(private lSS: LocalStorageService ) {
+
+    if (lSS.isSupported) {
+      //console.log("OK! local storage is supported!");
+      var storageType = lSS.getStorageType();
+      console.log("storageType: " + storageType);
+    }/*
+    this.checkConexion(function(err) {
+      if (err) {
+
+      }
+    });*/
+    this.fetchConexionData();
+    this.Conectar(this.ConnData);
+  }
+
+  ngOnInit() {
+  }
+
   submit(key, val) {
     return this.lSS.set(key, val);
   }
@@ -93,7 +91,7 @@ export class ConexionComponent implements OnInit {
 
   setTableRecord( table_id, key_id, record) {
     var table_hash = this.getTable(table_id);
-    console.log("table_hash:", table_hash, typeof table_hash);
+    //console.log("table_hash:", table_hash, typeof table_hash);
     table_hash[key_id] = record;
     this.setTable( table_id, table_hash );
   }
@@ -113,7 +111,7 @@ export class ConexionComponent implements OnInit {
   getTable( table_id ) {
     var table_hash_string = this.getItem(table_id);
     //var table_hash_string = this.getItem(table_id);
-    console.log('table_hash_string of ', table_id, table_hash_string, typeof table_hash_string);
+    //console.log('table_hash_string of ', table_id, table_hash_string, typeof table_hash_string);
     //var table_hash = JSON.parse( table_hash_string );
     var table_hash = table_hash_string;
     //console.log('table_hash of ', table_id, table_hash );
@@ -123,7 +121,7 @@ export class ConexionComponent implements OnInit {
     if (typeof table_hash == "string") {
       table_hash = JSON.parse(table_hash);
     }
-    console.log("getTable > table_hash:", table_hash, typeof table_hash);
+    //console.log("getTable > table_hash:", table_hash, typeof table_hash);
     return table_hash;
   }
 
@@ -197,7 +195,7 @@ export class ConexionComponent implements OnInit {
       var self = this;
       Osx.connect(function (err) {
           if (err) { return console.log(err); }
-          console.log('Connected to Odoo server.');
+          //console.log('Connected to Odoo server.');
           var inParams = [];
           inParams.push(search_params);
           inParams.push(search_fields); //fields
@@ -207,9 +205,9 @@ export class ConexionComponent implements OnInit {
           params.push(inParams);
           Osx.execute_kw( table_id, 'search_read', params, function (err, value) {
               if (err) { return console.log(err); }
-              console.log('Result: ', value);
+              //console.log('Result: ', value);
               for ( var rec in value) {
-                console.log('Record: rec:', rec, value[rec]);
+                //console.log('Record: rec:', rec, value[rec]);
                 var record = value[rec];
                 self.setTableRecord( table_id, record['name'], record);
               }
@@ -220,37 +218,77 @@ export class ConexionComponent implements OnInit {
 
   }
 
-  constructor( private lSS: LocalStorageService ) {
-/*
-    requests({ url: 'https://api.github.com/users/mralexgray/repos' })
-      .pipe(JSONStream.parse('*'))
-      .pipe(es.mapSync(function(data) {
-        console.error(data)
-        return data
-      }));
-*/
-      if (lSS.isSupported) {
-        console.log("OK! local storage is supported!");
-        var storageType = lSS.getStorageType();
-        console.log("storageType: " + storageType);
-        lSS.set("record1", "value of record 1");
-        lSS.set("record2", "value of record 2");
-        lSS.set("record3", "value of record 3");
-        console.log("keys:", this.getKeys());
-        //this.fetchPartners();
-      }
+  checkConexion(callback) {
+    this.fetchConexionData();
+    var self = this;
+    var connparams = {
+      url: this.ConnData.host,
+      port: this.ConnData.port,
+      db: this.ConnData.database,
+      username: this.ConnData.username,
+      password: this.ConnData.password
+    };
+    this.Ox = new odooxmlrpc(connparams);
+    this.Ox.connect(callback);
+  }
 
-      var params = {
-          db: this.database,
-          login: this.username,
-          password: this.password
+  Conectar(conexionData: ConexionData) {
+    if (conexionData && conexionData!=null) {
+      console.log("Conectando...", this, conexionData, this.ConnData);
+      var self = this;
+      var connparams = {
+        url: conexionData.host,
+        port: conexionData.port,
+        db: conexionData.database,
+        username: conexionData.username,
+        password: conexionData.password
       };
-
-      this.Ox.connect(function (err) {
-          if (err) { return console.log(err); }
-          console.log('Connected to Odoo server.');
+      this.Ox = new odooxmlrpc(connparams);
+      this.Ox.connect(function(err) {
+        if (err) {
+          self.message = "Error de conexión, intente de nuevo.";
+          return console.log("Connection ERROR", err);
+        }
+        console.log('Connected to Odoo server!! Saving parameters');
+        self.message = "Conectado al servidor.";
+        self.saveConexionData();
       });
-/*
+    } else {
+      this.message = "Debe completar todos los campos."
+    }
+  }
+
+  cleanConexionData() {
+    console.log("cleanConexionData");
+    this.ConnData = new ConexionData({
+      host: "",
+      port: "",
+      database: "",
+      username: "",
+      password: ""
+    });
+    this.removeItem('OdooParams');
+  }
+
+
+  fetchConexionData() {
+    var conndata = this.getItem('OdooParams');
+    if (conndata && conndata != null) {
+      console.log("fetchConexionData > conndata is an object", conndata, typeof conndata);
+      if (conndata["host"]) {
+        this.ConnData = new ConexionData(conndata);
+        return console.log("fetchConexionData found:", this.ConnData);
+      }
+    }
+    console.log("fetchConexionData not found:", this.ConnData);
+  }
+
+  saveConexionData() {
+    this.setItem('OdooParams',this.ConnData);
+    console.log("saveConexionData:", this.ConnData);
+  }
+
+  /*
       Ox.connect(function (err) {
           if (err) { return console.log(err); }
           console.log('Connected to Odoo server.');
@@ -422,10 +460,5 @@ export class ConexionComponent implements OnInit {
         req.write(json);
         req.end();
 */
-
-   }
-
-  ngOnInit() {
-  }
 
 }
