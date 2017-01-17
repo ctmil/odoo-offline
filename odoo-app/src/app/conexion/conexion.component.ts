@@ -144,9 +144,9 @@ export class ConexionComponent implements OnInit {
   fetchPartners(callback) {
     this.fetchOdooTable("res.partner",
       [['is_company', '=', true], ['customer', '=', true]],
-      ['name', 'phone', 'email', 'comment'],
+      ['name', 'phone', 'email', 'comment','document_number'],
       0,
-      5,
+      10,
       callback);
     /*
       var Osx = this.Ox;

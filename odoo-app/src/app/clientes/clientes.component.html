@@ -31,7 +31,8 @@
                 		    <th>Nombre</th>
 		                    <th>Phone</th>
                 		    <th>Email</th>
-		                    <th class="actions">Ações</th>
+                        <th>Nro Documento</th>
+		                    <th class="actions">Acciones</th>
 		                 </tr>
 		            </thead>
 		            <tbody *ngIf="clientes.length > 0">
@@ -40,6 +41,7 @@
                 		    <td>{{client.name}}</td>
 		                    <td>{{client.phone}}</td>
                 		    <td>{{client.email}}</td>
+                        <td>{{client.document_number}}</td>
 		                    <td class="actions">
                 		        <a class="btn btn-success btn-xs" href="view.html">Ver</a>
 		                        <a class="btn btn-warning btn-xs" href="edit.html">Editar</a>
