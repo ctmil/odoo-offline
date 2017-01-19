@@ -32,6 +32,8 @@ var odooxmlrpc = require('odoo-xmlrpc');
 export class ConexionComponent implements OnInit {
 
   message = "Por favor conéctese."
+  isConnected = false
+  isErrorConnection = false
 
   ConnData: ConexionData = new ConexionData({
     host: "",
@@ -146,7 +148,7 @@ export class ConexionComponent implements OnInit {
       [['is_company', '=', true], ['customer', '=', true]],
       ['name', 'phone', 'email', 'comment','document_number'],
       0,
-      10,
+      1000,
       callback);
     /*
       var Osx = this.Ox;
@@ -181,7 +183,7 @@ export class ConexionComponent implements OnInit {
       [],//['is_company', '=', true], ['customer', '=', true]
       ['name','default_code','lst_price','qty_available'],
       0,
-      5,
+      5000,
       callback);
   }
 
@@ -194,7 +196,11 @@ export class ConexionComponent implements OnInit {
       var Osx = this.Ox;
       var self = this;
       Osx.connect(function (err) {
-          if (err) { return console.log(err); }
+        if (err) {
+          self.isErrorConnection = true;
+          self.message = err;
+          return console.log(err);
+          }
           //console.log('Connected to Odoo server.');
           var inParams = [];
           inParams.push(search_params);
@@ -251,6 +257,7 @@ export class ConexionComponent implements OnInit {
         }
         console.log('Connected to Odoo server!! Saving parameters');
         self.message = "Conectado al servidor.";
+        self.isConnected = true;
         self.saveConexionData();
       });
     } else {

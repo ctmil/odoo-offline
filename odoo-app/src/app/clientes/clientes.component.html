@@ -1,4 +1,4 @@
-    <div id="top" class="row">
+  <div id="top" class="row">
 
 		    <div class="col-md-3">
 		        <h2>{{message}}</h2>
@@ -15,11 +15,11 @@
 		        </div>
 		    </div>
 
-		    <div class="col-md-3">
+		    <!-- div class="col-md-3">
 		        <a href="add-cliente.html" class="btn btn-primary pull-right h2">Nuevo Cliente</a>
-		    </div>
+		    </div -->
 
-	     </div> <!-- /#top -->
+	</div> <!-- /#top -->
 
 	     <hr>
 	     <div id="list" class="row">
@@ -36,7 +36,7 @@
 		                 </tr>
 		            </thead>
 		            <tbody *ngIf="clientes.length > 0">
-                		<tr *ngFor="let client of clientes">
+                		<tr *ngFor="let client of clientes|paginate: { itemsPerPage: 10, currentPage: p }">
 		                    <td>{{id}}</td>
                 		    <td>{{client.name}}</td>
 		                    <td>{{client.phone}}</td>
@@ -50,21 +50,16 @@
 		                </tr>
 		            </tbody>
 		         </table>
+
 		     </div>
 	     </div> <!-- /#list -->
 
 	     <div id="bottom" class="row">
 
 		    <div class="col-md-12">
-
-		        <ul class="pagination">
-		            <li class="disabled"><a>&lt; Anterior</a></li>
-		            <li class="disabled"><a>1</a></li>
-		            <li><a href="#">2</a></li>
-		            <li><a href="#">3</a></li>
-		            <li class="next"><a href="#" rel="next">Próximo &gt;</a></li>
-		        </ul><!-- /.pagination -->
-
+             <div *ngIf="clientes.length > 0">
+                  <pagination-controls (pageChange)="p = $event"></pagination-controls>
+              </div>
 		    </div>
 
 	     </div> <!-- /#bottom -->

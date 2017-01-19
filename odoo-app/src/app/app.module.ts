@@ -4,6 +4,8 @@ import { BrowserModule } from "@angular/platform-browser";
 import { NgModule } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { HttpModule } from "@angular/http";
+// import pagination module
+import {Ng2PaginationModule} from 'ng2-pagination'; // <-- import the module
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-route.module';
@@ -40,7 +42,8 @@ import { LocalStorageModule } from 'angular-2-local-storage';
     LoginRoutingModule,
     BrowserModule,
     FormsModule,
-    HttpModule
+    HttpModule,
+    Ng2PaginationModule
   ],
   providers: [],
   bootstrap: [AppComponent]

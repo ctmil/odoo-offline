@@ -20,5 +20,11 @@
   </div>
 </nav>
 <div id="main" class="container">
+  <div *ngIf="isConnected" class="alert alert-success">
+      <strong>Conectado a {{connected}}</strong>
+  </div>
+    <div *ngIf="!isConnected == true" class="alert alert-danger">
+      <strong>Error conectando a {{connected}}</strong>
+  </div>
   <router-outlet></router-outlet>
 </div>

@@ -14,6 +14,7 @@ import { ConexionComponent } from './conexion/conexion.component';
 export class AppComponent {
   title = "Cliente Odoo App";
   connected: string = "Ingresar";
+  isConnected: boolean = false;
   conexion : ConexionComponent;
   constructor(private lSS : LocalStorageService) {
 
@@ -21,9 +22,11 @@ export class AppComponent {
     var self = this;
     this.conexion.checkConexion(function(err) {
       if (err) {
+        self.isConnected = false;
         self.connected = "Ingresar [error]";
         return;
       }
+      self.isConnected = true;
       self.connected = "Conectado - " + self.conexion.ConnData.host + ":" + self.conexion.ConnData.port + " - " + self.conexion.ConnData.username;
       console.log(self.connected);
     });
