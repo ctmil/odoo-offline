@@ -183,7 +183,7 @@ export class ConexionComponent implements OnInit {
       [],//['is_company', '=', true], ['customer', '=', true]
       ['name','default_code','lst_price','qty_available'],
       0,
-      5000,
+      1000,
       callback);
   }
 
