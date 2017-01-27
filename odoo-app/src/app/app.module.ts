@@ -47,7 +47,8 @@ import { LocalStorageModule } from 'angular-2-local-storage';
     HttpModule,
     Ng2PaginationModule
   ],
-  providers: [],
+  providers: [
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule {

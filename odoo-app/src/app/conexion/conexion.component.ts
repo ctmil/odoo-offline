@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { LocalStorageService } from 'angular-2-local-storage';
 import { Subscription }   from 'rxjs/Subscription';
 
@@ -15,7 +15,7 @@ import { ConexionData } from '../conexion-data';
   //changeDetection: ChangeDetectionStrategy.OnPush
 })
 
-export class ConexionComponent implements OnInit {
+export class ConexionComponent implements OnInit, OnDestroy {
 
   str_verifique : string = "Por favor verifique sus datos de conexión.";
   message = "";
@@ -57,7 +57,6 @@ export class ConexionComponent implements OnInit {
         console.log(`[ConexionComponent] Subscribed received connectedOk: ${connectedOk}`);
         this.isConnected = connectedOk;
         if (connectedOk) {
-
         } else {
           this.message = this.str_verifique;
         }
@@ -66,11 +65,10 @@ export class ConexionComponent implements OnInit {
       });
 
   }
-/*
   ngOnDestroy() {
     this.cx_message_sub.unsubscribe();
     this.cx_connectedOk_sub.unsubscribe();
-}*/
+  }
 
   Conectar(conexionData: ConexionData) {
     this.CxService.Conectar(conexionData);

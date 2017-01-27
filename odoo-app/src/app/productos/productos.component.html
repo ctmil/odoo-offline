@@ -33,7 +33,7 @@
                 		<tr *ngFor="let producto of productos | paginate: { itemsPerPage: 10, currentPage: p }">
 		                    <td>{{producto.default_code}}</td>
                 		    <td>{{producto.name}}</td>
-		                    <td>{{producto.lst_price}} $</td>
+		                    <td class="col-number">{{producto.lst_price | currency:'USD':true}} </td>
                 		    <td>{{producto.qty_available}}</td>
 		                    <td class="actions">
                 		        <a class="btn btn-success btn-xs" href="view.html">Ver</a>
