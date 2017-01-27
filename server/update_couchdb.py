@@ -21,10 +21,7 @@ gcontext = ssl._create_unverified_context()
 
 # import pdb;pdb.set_trace()
 # Get the uid
-if config['port'] != '':
-	url = 'http://' + config['host'] + ':' + config['port']
-else:
-	url = 'http://' + config['host'] 
+url = config['url']
 sock_common = xmlrpclib.ServerProxy (url + '/xmlrpc/common',context=gcontext)
 uid = sock_common.login(dbname, username, pwd)
 
@@ -32,8 +29,11 @@ uid = sock_common.login(dbname, username, pwd)
 sock = xmlrpclib.ServerProxy(url + '/xmlrpc/object',context=gcontext)
 
 partner_ids = sock.execute(dbname,uid,pwd,'res.partner','search',[('customer','=',True)])
+index = 0
 for partner_id in partner_ids:
 	print partner_id
+	print index
+	index =+ 1
 	partner_data = sock.execute(dbname,uid,pwd,'res.partner','read',partner_id,['name','document_number','phone','email'])
 	print partner_data
 	partner_id = str(partner_data['id'])
@@ -54,8 +54,11 @@ for partner_id in partner_ids:
 		partner_db[partner_id] = vals
 
 product_ids = sock.execute(dbname,uid,pwd,'product.product','search',[('type','=','product')])
+index = 0
 for product_id in product_ids:
 	print product_id
+	print index
+	index =+ 1
 	product_data = sock.execute(dbname,uid,pwd,'product.product','read',product_id,['name','default_code','lst_price','qty_available'])
 	print product_data
 	product_id = str(product_data['id'])
