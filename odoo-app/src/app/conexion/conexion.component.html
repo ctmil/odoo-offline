@@ -5,15 +5,9 @@
 	</div>
 </div>
 <!-- h2 class="form-signin-heading">{{message}}</h2 -->
-<div *ngIf="isConnected" class="alert alert-success">
+<div [ngClass]="classMessage()">
       <strong>{{message}}</strong>
 </div>
-<div [ngClass]="{'alert alert-danger': isErrorConnection }">
-      <strong>{{message}}</strong>
-</div>
-<!-- div class="alert alert-success">
-      <strong>{{message}}</strong>
-</div -->
 		<div class="row">
 			<div class="col-md-3">
 			</div>

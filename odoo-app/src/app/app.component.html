@@ -14,17 +14,21 @@
         <li ><a routerLink="/" routerLinkActive="active">Inicio</a></li>
         <li><a routerLink="/clientes" routerLinkActive="active">Clientes</a></li>
         <li><a routerLink="/productos" routerLinkActive="active">Productos</a></li>
-        <li><a routerLink="/conexion" routerLinkActive="active">{{connected}}</a></li>
+        <li><a routerLink="/conexion" routerLinkActive="active">
+          <div *ngIf="isConnected">
+            Conectado
+          </div>
+          <div *ngIf="isConnected==false">
+            Ingresar
+          </div>
+        </a></li>
         </ul>
     </div>
   </div>
 </nav>
 <div id="main" class="container">
-  <div *ngIf="isConnected" class="alert alert-success">
-      <strong>Conectado a {{connected}}</strong>
-  </div>
-    <div *ngIf="!isConnected == true" class="alert alert-danger">
-      <strong>Error conectando a {{connected}}</strong>
+  <div [ngClass]="classMessage()">
+      <strong>{{connectedServerString}}</strong>
   </div>
   <router-outlet></router-outlet>
 </div>

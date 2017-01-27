@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { ConexionComponent } from '../conexion/conexion.component';
 import { LocalStorageService } from 'angular-2-local-storage';
 
+import { ConexionService } from '../conexion.service'
+import { ConexionData } from '../conexion-data'
 import { Producto } from '../producto';
 import { ProductosService } from '../productos.service';
 
@@ -9,17 +10,15 @@ import { ProductosService } from '../productos.service';
   selector: 'app-productos',
   templateUrl: './productos.component.html',
   styleUrls: ['./productos.component.css'],
-  providers: [ProductosService]
+  providers: [ProductosService,ConexionService]
 
 })
 export class ProductosComponent implements OnInit {
 
   message = "Productos (in sync)"
-  Con: ConexionComponent;
 
-  constructor( private lSS: LocalStorageService ) {
-    //ConexionComponent
-    var self = this;
+  constructor( private Con: ConexionService ) {
+  /*  var self = this;
     this.Con = new ConexionComponent(lSS);
     this.Con.fetchProducts(function() {
       var table_hash = self.Con.getTable("product.product");
@@ -30,7 +29,7 @@ export class ProductosComponent implements OnInit {
       self.message = "Productos (" + count + ")";
       //console.log(self.message);
     } );
-
+*/
   }
 
   get productos() {
@@ -44,6 +43,17 @@ export class ProductosComponent implements OnInit {
 }
 
   ngOnInit() {
+    var self = this;
+
+    this.Con.fetchProducts(function() {
+      var table_hash = self.Con.getTable("product.product");
+      var count = 0;
+      for (var rec in table_hash) {
+        count += 1;
+      }
+      self.message = "Productos (" + count + ")";
+      //console.log(self.message);
+    } );
   }
 
 }

@@ -29,7 +29,14 @@
     }
   ],
   "addons": [],
-  "packages": [],
+  "packages": [
+    {
+      "PouchDB": {
+      "main": "pouchdb.js",
+      "defaultExtension": "js"
+      }
+    }
+  ],
   "e2e": {
     "protractor": {
       "config": "./protractor.conf.js"

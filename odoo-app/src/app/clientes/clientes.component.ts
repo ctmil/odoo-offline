@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { LocalStorageService } from 'angular-2-local-storage';
-import { ConexionComponent } from '../conexion/conexion.component';
+import { ConexionService } from '../conexion.service';
 import { Cliente } from '../cliente';
 import { ClientesService } from '../clientes.service';
 
@@ -14,13 +14,10 @@ import { ClientesService } from '../clientes.service';
 export class ClientesComponent implements OnInit {
 
   message = "Clientes (in sync)"
-  Con: ConexionComponent;
 
-  constructor( private lSS: LocalStorageService ) {
+  constructor( private Con : ConexionService ) {
 
-    //ConexionComponent
     var self = this;
-    this.Con = new ConexionComponent(lSS);
     this.Con.fetchPartners(function() {
       var table_hash = self.Con.getTable("res.partner");
       var count = 0;
@@ -28,7 +25,7 @@ export class ClientesComponent implements OnInit {
         count += 1;
       }
       self.message = "Clientes (" + count + ")";
-      //console.log(self.message);
+      console.log(self.message);
     } );
 
   }
@@ -39,7 +36,8 @@ export class ClientesComponent implements OnInit {
         'test2': { name: 'test2' }
       };*/
     var res_partner = this.Con.getTableAsArray("res.partner");
-    console.log("calling get clientes >", res_partner);
+    //var res_partner = this.Con.getClientes();
+    //console.log("calling get clientes >", res_partner);
     return res_partner;
   }
 

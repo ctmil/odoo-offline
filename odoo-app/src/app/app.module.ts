@@ -20,6 +20,8 @@ import { AboutComponent } from './about/about.component';
 import { PageNotFoundComponent } from './not-found.component';
 import { LoginComponent }       from './login.component';
 import { LocalStorageModule } from 'angular-2-local-storage';
+//var ngSQLite = require('angular-sqlite');
+
 
 @NgModule({
   declarations: [
