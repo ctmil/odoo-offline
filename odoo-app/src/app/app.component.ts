@@ -3,7 +3,6 @@ import { FormsModule } from "@angular/forms";
 import { Component, OnInit, OnDestroy } from "@angular/core";
 import { Observable, Subscription } from 'rxjs/Rx';
 import { LocalStorageService } from 'angular-2-local-storage';
-import { Subscription }   from 'rxjs/Subscription';
 
 //======App
 import { ConexionService } from './conexion.service'
@@ -71,24 +70,17 @@ export class AppComponent implements OnInit, OnDestroy {
     } else return "alert alert-warning";
   }
 
-}
-
-  tickerFunc(tick) {
-    var self = this;
-    this.ticks = tick;
-    self.CxService.checkConexion(function(err) {
-          console.log(self.CxService);
-          if (err) {
-              this.connected = "Ingresar [error]";
-              return;
-              }
-          let host: string = self.CxService.ConnData.host;
-          let port: string = self.CxService.ConnData.port;
-          this.connected = "Conectado - " + host + ":" + port + " - " + self.CxService.ConnData.username;
-      //console.log(this.connected);
-         });  // checkConexion
+  tickerFunc( tick : any ) {
+      this.ticks = tick;
+      this.CxService.Conectar(this.CxService.ConnData);
     } // tickerFunc
 
 
+
+
 } // Class AppComponent
+
+
+
+
 
