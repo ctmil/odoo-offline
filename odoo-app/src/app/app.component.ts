@@ -29,13 +29,17 @@ export class AppComponent implements OnInit, OnDestroy {
 
   cx_connectedOk_sub: Subscription;
   cx_connectedServerString_sub: Subscription;
+  cx_product_product_sub: Subscription;
+  cx_res_partner_sub: Subscription;
 
   constructor(private CxService : ConexionService, private cd: ChangeDetectorRef ) {
 
   }
 
   ngOnInit() {
+
     console.log('[AppComponent] Subscribing...connectedOk$');
+
     this.cx_connectedOk_sub = this.CxService.connectedOk$.subscribe(
       connectedOk => {
         console.log(`[AppComponent] Received connectedOk: ${connectedOk}`);
@@ -50,17 +54,35 @@ export class AppComponent implements OnInit, OnDestroy {
         this.connectedServerString = connectedServerString;
         this.cd.markForCheck();
         this.cd.detectChanges();
+        });
+
+      this.cx_product_product_sub = this.CxService.pdb['product.product'].updated$.subscribe(
+      (product_product_updated) => {
+        console.log(`[AppComponent] Received updated: ${product_product_updated}`);
+        //console.log(`[ProductosComponent] Subscribed saved message: to ${lastmessage}`);
+        this.cd.markForCheck();
+        this.cd.detectChanges();
       });
 
-        this.timer = Observable.timer(15000,15000);
+      this.cx_res_partner_sub = this.CxService.pdb['res.partner'].updated$.subscribe(
+      (res_partner_updated) => {
+        console.log(`[AppComponent] Received updated: ${res_partner_updated}`);
+        //console.log(`[ProductosComponent] Subscribed saved message: to ${lastmessage}`);
+        this.cd.markForCheck();
+        this.cd.detectChanges();
+      });
+        //this.timer = Observable.timer(15000,15000);
         // subscribing to a observable returns a subscription object
-        this.sub = this.timer.subscribe(t => this.tickerFunc(t));
+        //this.sub = this.timer.subscribe(t => this.tickerFunc(t));
 
   }
 
   ngOnDestroy() {
-
-        this.sub.unsubscribe();
+      this.cx_connectedOk_sub.unsubscribe();
+      this.cx_connectedServerString_sub.unsubscribe();
+      this.cx_product_product_sub.unsubscribe();
+      this.cx_res_partner_sub.unsubscribe();
+        //this.sub.unsubscribe();
 
     }
 
@@ -73,6 +95,7 @@ export class AppComponent implements OnInit, OnDestroy {
   tickerFunc( tick : any ) {
       this.ticks = tick;
       this.CxService.Conectar(this.CxService.ConnData);
+      console.log("AppComponent > this.CxService:", this.CxService);
     } // tickerFunc
 
 

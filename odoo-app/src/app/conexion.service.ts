@@ -4,6 +4,8 @@ import { LocalStorageService } from 'angular-2-local-storage';
 
 import { Cliente } from './cliente';
 import { ClientesService } from './clientes.service';
+import { Producto } from './producto';
+import { ProductosService } from './productos.service';
 import { ConexionData } from './conexion-data';
 import { Subject }    from 'rxjs/Subject';
 import {  BehaviorSubject }    from 'rxjs/BehaviorSubject';
@@ -16,16 +18,22 @@ export class ConexionService {
 
 
   private message = new BehaviorSubject("");
-  private connectedServerString = new BehaviorSubject("");
-  private connectedOk = new BehaviorSubject(false);
-
   message$ = this.message.asObservable();
+
+  private connectedServerString = new BehaviorSubject("");
   connectedServerString$ = this.connectedServerString.asObservable();
+
+  private connectedOk = new BehaviorSubject(false);
   connectedOk$ = this.connectedOk.asObservable();
+
+  private databaseUpdated = new BehaviorSubject(false);
+  databaseUpdated$ = this.databaseUpdated.asObservable();
 
   isErrorConnection: boolean;
 
   clientes: Cliente[];
+  productos: Producto[];
+  pdb : any = {};
   pdb_clientes: any = false;
   pdb_productos: any = false;
   pdb_tickets: any = false;
@@ -45,9 +53,7 @@ export class ConexionService {
 
   constructor(private lSS: LocalStorageService) {
 
-    this.connectedOk.next(false);
-    console.log("ConexionService > constructor! connectedOk:", this.connectedOk);
-
+    console.log("ConexionService > constructor!");
 
     if (lSS.isSupported) {
       //console.log("OK! local storage is supported!");
@@ -55,10 +61,40 @@ export class ConexionService {
       //console.log("storageType: " + storageType);
     }
 
-    this.pdb_clientes = new PouchDB("res.partner");
-    this.clientes = [];
+
+    this.pdb['res.partner'] = {
+      'key_name': [ "id", "name" ],
+      'db': new PouchDB("res.partner"),
+      'updated': new BehaviorSubject(false),
+      'cache_records': [],
+      'lastsync': '',
+      'len': 0,
+    };
+    this.pdb['res.partner'].updated$ = this.pdb['res.partner'].updated.asObservable();
+
+    this.pdb_clientes = this.pdb['res.partner'].db;
+    this.clientes = this.pdb['res.partner'].cache_records;
+
+    this.pdb['product.product'] = {
+      'key_name': [ "default_code", "name" ],
+      'db': new PouchDB("product.product"),
+      'updated': new BehaviorSubject(false),
+      'cache_records': [],
+      'lastsync': '',
+      'len': 0,
+    };
+    this.pdb['product.product'].updated$ = this.pdb['product.product'].updated.asObservable();
+
+    this.pdb_productos = this.pdb['product.product'].db;
+    this.productos = this.pdb['product.product'].cache_records;
+
+
+
+
     this.fetchConexionData();
     this.Conectar(this.ConnData);
+
+    console.log("ConexionService > constructor end!", this);
 
   }
 
@@ -94,18 +130,44 @@ submit(key, val) {
     return lsKeys;
   }
 
-  setTableRecord( table_id, key_id, record) {
-    if (table_id == "res.partner") {
+  setTableRecord( table_id, key_id, record ) {
+    if (table_id in this.pdb) {
       record["_id"] = key_id;
-      this.saveCliente(record);
+      this.saveDoc( table_id, record, (response) => console.log("saveDoc! ok!", response));
       return;
     }
 
     var table_hash = this.getTable(table_id);
     //console.log("table_hash:", table_hash, typeof table_hash);
+    if (key_id == undefined) key_id = record['id'];
+    if (key_id == undefined) key_id = record['_id'];
+    if (key_id == undefined) key_id = record['name'];
     table_hash[key_id] = record;
     this.setTable( table_id, table_hash );
   }
+
+  setTableRecords(table_id : string, key_id_name: any, records : any ) {
+
+    if (table_id in this.pdb) {
+      this.saveDocs(table_id, key_id_name, records, 0, (response) => {
+
+        console.log("saveDoc > Finalized!!!", response, key_id_name );
+
+        this.getDocs(table_id, (result) => {
+          this.pdb[table_id].updated.next(true);
+          this.databaseUpdated.next(true);
+        });
+
+      });
+      return;
+    }
+
+    for (var i in records) {
+      var record = records[i];
+      this.setTableRecord( table_id, record[key_id_name], record );
+    }
+  }
+
 
   getTableRecord(table_id, key_id) {
     var table_hash = this.getTable(table_id);
@@ -118,60 +180,132 @@ submit(key, val) {
     this.setTable( table_id, table_hash );
   }
 
-  getClientes() {
-    console.log("CxService::getClientes");
+  getClientes(callback) {
+    return this.getDocs('res.partner', callback );
+  }
 
-    var self = this;
-    var docs = this.pdb_clientes.allDocs({
-      include_docs: true
-    }).then(function(result) {
-      self.clientes = [];
-      for ( let row in result.rows ) {
-        self.clientes.push( result.rows[row]['doc'] );
-        console.log("CxService::getClientes row:", row, result.rows[row]);
+
+  getDocs( table_id, callback ) {
+    console.log(`CxService::getDocs(${table_id})`);
+    var docs = this.pdb[table_id]['db'].allDocs({include_docs: true}).then((result) => {
+
+      this.pdb[table_id]['cache_records'] = [];
+      //console.log("getDocs > allDocs > result:", result);
+      for (var row in result.rows) {
+        this.pdb[table_id]['cache_records'].push( result.rows[row]['doc'] );
+        //console.log("CxService::getDocs row:", row, result.rows[row]);
       }
-
-      console.log("CxService::getClientes result:", result, " clientes:", self.clientes);
+      //let pdb_cache = this.pdb[table_id]['cache_records'];
+      //console.log(`CxService::getDocs(${table_id}) > cache records: ${pdb_cache.length}`, pdb_cache);
+      //console.log("CxService::getClientes result:", result, " clientes:", self.clientes);
+      if (callback) callback(result);
 
     }).catch(function(err) {
-      console.log("CxService::Error fetching getCLientes:", err);
+
+      console.log(`CxService::getDocs(${table_id}) > error calling allDocs`, err);
+      if (callback) callback(err);
+
     });
 
     return docs;
 
   }
 
-  saveCliente(cliente: any) {
-    var self = this;
-    console.log("CxService::saveCliente", cliente, self);
+  saveClientes(key_id_name: any, records: any, offset: any, callback: any) {
+    this.saveDocs('res.partner', key_id_name, records, offset, callback );
+  }
 
-    this.pdb_clientes.get(cliente["_id"]).catch(function (err) {
-      if (err.name === 'not_found') {
-        console.log("CxService::saveCliente > ok not found create it!", cliente["_id"], err.name);
-        self.pdb_clientes.put(cliente).then(function(response) {
-          console.log("CxService::saveCliente > created response:", response);
+  setId( key_id_name: any, record: any ) {
+    if (typeof key_id_name == 'string')
+      return  record[key_id_name];
+    if (key_id_name.length > 0) {
+      var key = "";
+      var sep = "";
+      for( var n in key_id_name) {
+        key = key+sep+key_id_name[n]+"_"+record[key_id_name[n]];
+        sep = "_";
+      }
+      return key;
+    }
+  }
+
+  saveDocs( table_id: string, key_id_name: any, records: any, offset: any, callback: any ) {
+    if (offset == undefined) offset = 0;
+    var record = records[offset];
+    if (record) {
+      record["_id"] = this.setId( key_id_name, record );
+      //if (offset==0) console.log(`saveDocs(${table_id}) >> N:${records.length}`, records, key_id_name);
+      if (offset == 0) console.log(`saveDocs(${table_id}) >> N:${records.length}`);
+      offset = offset + 1;
+      if (offset < records.length) {
+        this.saveDoc(table_id, record, (response) => {
+          this.saveDocs(table_id, key_id_name, records, offset, callback);
+        });
+      } else {
+        this.saveDoc(table_id, record, (response) => {
+          var r = {
+            processed: offset,
+            total: records.length,
+            record: response
+          };
+          if (callback) callback(r);
+        });
+      }
+    }
+  }
+
+  saveCliente(cliente: any, callback: any) {
+    this.saveDoc('res.partner', cliente, callback);
+  }
+
+  saveDoc( table_id: string, doc: any, callback: any) {
+
+    //console.log(`CxService::saveDoc(${table_id},${doc._id})`);
+
+    this.pdb[table_id]['db'].get(doc["_id"]).catch( (err1) => {
+
+      if (err1.name === 'not_found') {
+
+        //console.log("CxService::saveDoc > ok not found create it!", doc["_id"], err.name);
+
+        this.pdb[table_id]['db'].put(doc).then(function(response) {
+
+          console.log(`CxService::saveDoc > posted !! ${doc._id}`);
+          if (callback) callback(response);
+
         }).catch(function(err) {
-          console.log( "CxService::saveCliente > created error:", err );
+          //console.log("CxService::saveDoc > created error:", err);
+          if (callback) callback(err);
         });
       } else { // hm, some other error
-        console.log("CxService::saveCliente > get error: ", cliente["_id"], err );
+        console.log("CxService::saveDoc > get error: ", doc["_id"], err1 );
         //throw err;
+        if (callback) callback(err1);
       }
-    }).then(function (clientedoc) {
+    }).then((result_doc) => {
       // sweet, here is our configDoc
-      console.log("CxService::saveCliente ok founded! Next?", clientedoc);
-      cliente["_rev"] = clientedoc["_rev"];
-      console.log("CxService::saveCliente > update it! With:", cliente, self.pdb_clientes);
-      self.pdb_clientes.put(cliente).then(function(response) {
-        console.log("CxService::saveCliente > updated response:", response);
-        self.getClientes();
-      }).catch(function(err) {
-        console.log( "CxService::saveCliente > updated error:", err );
-      });
+      //assign same "_rev"
+      if (result_doc) {
+        //console.log("CxService::saveDoc get founded! Next?", result_doc["_id"], result_doc);
+        doc["_rev"] = result_doc["_rev"];
+        //console.log("CxService::saveDoc > update it! With:", cliente, self.pdb_clientes);
+        this.pdb[table_id]['db'].put(doc).then(function(response) {
 
-    }).catch(function (err) {
+          console.log(`CxService::saveDoc > updated !! ${doc._id}`);
+          if (callback) callback(response);
+
+        }).catch(function(err) {
+
+          console.log("CxService::saveDoc > updated error:", doc, err);
+          if (callback) callback(err);
+
+        });
+      }
+
+    }).catch((err) => {
       // handle any errors
-      console.log("CxService::saveCliente > get error: ", cliente["_id"], err );
+      console.log("CxService::saveDoc > get error: ", err, " doc:", doc);
+      if (callback) callback(err);
     });
 
 /**
@@ -184,14 +318,14 @@ submit(key, val) {
 
   updateCliente(cliente: any) {
     return this.pdb_clientes.put(cliente);
-}
+  }
 
   getProductos() {
-
+/*
     var docs = this.pdb_productos.allDocs({
       include_docs: true
     });
-    return docs;
+    return docs;*/
 
   }
 
@@ -306,10 +440,10 @@ saveProducto(producto: any) {
       var Osx = this.Ox;
       var self = this;
       Osx.connect(function (err) {
-        if (err) {
-          self.isErrorConnection = true;
-          self.message = err;
-          return console.log(err);
+          if (err) {
+            self.isErrorConnection = true;
+            self.message = err;
+            return console.log(err);
           }
           //console.log('Connected to Odoo server.');
           var inParams = [];
@@ -322,11 +456,15 @@ saveProducto(producto: any) {
           Osx.execute_kw( table_id, 'search_read', params, function (err, value) {
               if (err) { return console.log(err); }
               //console.log('Result: ', value);
+              /**
               for ( var rec in value) {
                 //console.log('Record: rec:', rec, value[rec]);
                 var record = value[rec];
                 self.setTableRecord( table_id, record['name'], record);
               }
+              */
+              var records = value;
+              self.setTableRecords( table_id, self.pdb[table_id]['key_name'], records);
 
               if (callback) callback();
           });
@@ -350,7 +488,7 @@ saveProducto(producto: any) {
 
   Conectar(conexionData: ConexionData) {
     if (conexionData && conexionData!=null) {
-      console.log("Conectando...");
+      console.log("Conectando >>>>>>>>> ");
       var self = this;
       var connparams = {
         url: conexionData.host,
@@ -367,7 +505,7 @@ saveProducto(producto: any) {
           self.connectedOk.next(false);
           return console.log("ConexionService ERROR:", err);
         }
-        console.log('Connected to Odoo server!! Saving parameters');
+        console.log('>>>>>>>>> Connected to Odoo server!! Saving parameters');
         self.message.next("Conectado al servidor.");
         self.connectedServerString.next("Conectado");
         //self.isConnected = true;
@@ -409,7 +547,7 @@ saveProducto(producto: any) {
 
   saveConexionData() {
     this.setItem('OdooParams',this.ConnData);
-    console.log("saveConexionData:", this.ConnData);
+    //console.log("saveConexionData:", this.ConnData);
   }
 
   /*

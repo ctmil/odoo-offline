@@ -1,5 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { LocalStorageService } from 'angular-2-local-storage';
+import { Subscription }   from 'rxjs/Subscription';
+
+
 import { ConexionService } from '../conexion.service';
 import { Cliente } from '../cliente';
 import { ClientesService } from '../clientes.service';
@@ -11,23 +14,29 @@ import { ClientesService } from '../clientes.service';
   styleUrls: ['./clientes.component.css'],
   providers: [ClientesService]
 })
-export class ClientesComponent implements OnInit {
+export class ClientesComponent implements OnInit,OnDestroy {
 
-  message = "Clientes (in sync)"
+  message = "Clientes (loading...)"
+  cx_clientesDatabaseUpdated_sub: Subscription;
+  table_id: string = "res.partner";
 
-  constructor( private Con : ConexionService ) {
+  constructor( private CxService : ConexionService, private cd: ChangeDetectorRef ) {
+    this.CxService.getDocs( this.table_id, (res) => {
+      if (this.CxService.pdb[this.table_id]["cache_records"].length==0) {
 
-    var self = this;
-    this.Con.fetchPartners(function() {
-      var table_hash = self.Con.getTable("res.partner");
-      var count = 0;
-      for (var rec in table_hash) {
-        count += 1;
+        this.CxService.fetchOdooTable(this.table_id,
+           [['is_company', '=', true], ['customer', '=', true]],
+           ['name', 'phone', 'email', 'comment','document_number'],
+          0,
+          5000,
+          () => {
+            this.CxService.pdb[this.table_id].updated.next(true);
+        });
+
       }
-      self.message = "Clientes (" + count + ")";
-      console.log(self.message);
-    } );
 
+      this.CxService.pdb[this.table_id].updated.next(true);
+    } );
   }
 
   get clientes() {
@@ -35,13 +44,27 @@ export class ClientesComponent implements OnInit {
         'test1': { name: 'test1 ' },
         'test2': { name: 'test2' }
       };*/
-    var res_partner = this.Con.getTableAsArray("res.partner");
+    //var res_partner = this.CxService.getTableAsArray("res.partner");
     //var res_partner = this.Con.getClientes();
-    //console.log("calling get clientes >", res_partner);
-    return res_partner;
+    //console.log("calling get clientes >", this.CxService.pdb['res.partner']);
+    //return res_partner;
+    return this.CxService.pdb[this.table_id]['cache_records'];
   }
 
   ngOnInit() {
+    this.cx_clientesDatabaseUpdated_sub = this.CxService.pdb[this.table_id].updated$.subscribe(
+      lastmessage => {
+        //console.log(`[ClientesComponent] Subscribed received message: ${lastmessage}`);
+        this.message = "Clientes ("+this.CxService.pdb['res.partner']['cache_records'].length+")";
+        //console.log(`[ClientesComponent] Subscribed saved message: to ${lastmessage}`);
+        this.cd.markForCheck();
+        this.cd.detectChanges();
+      });
+
+  }
+
+  ngOnDestroy() {
+    this.cx_clientesDatabaseUpdated_sub.unsubscribe();
   }
 
 }

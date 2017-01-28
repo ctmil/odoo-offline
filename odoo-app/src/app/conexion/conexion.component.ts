@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { LocalStorageService } from 'angular-2-local-storage';
 import { Subscription }   from 'rxjs/Subscription';
 
