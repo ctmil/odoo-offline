@@ -1,0 +1,7 @@
+{
+"host" : "localhost",
+"port": "8069",
+"database": "demo_couchdb",
+"username": "admin",
+"password": "demo_couchdb"
+}
