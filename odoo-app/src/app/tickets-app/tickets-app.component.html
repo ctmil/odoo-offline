@@ -1,62 +1,85 @@
 <div id="top" class="row">
-		    <div class="col-md-3">
-		        <h2>{{message}}</h2>
-		    </div>
+  <div class="col-md-3">
+      <h2>{{message}}</h2>
+  </div>
+</div> <!-- /#top -->
+
+<div *ngIf="this.action!=''">
+  <div  class="row">
+    <div  class="form-inline">
+      <div class="form-group col-md-3">
+        <label for="cliente">Cliente</label>
+          <input class="form-control" placeholder="Client" autofocus="" [(ngModel)]="newTicket.client" (keyup.enter)="addTicket()" name="cliente"/>
+      </div>
+      <div class="form-group col-md-3">
+        <label for="amount">Monto</label>
+        <input class="form-control" placeholder="Amount"  autofocus="" [(ngModel)]="newTicket.amount" (keyup.enter)="addTicket()" name="amount"/>
+      </div>
+      <div class="form-group col-md-3">
+        <label for="fecha">Fecha</label>
+        <input class="form-control" placeholder="DD/MM/YYYY" autofocus="" ng2-datetime-picker [(ngModel)]="newTicket.date" (keyup.enter)="addTicket()" name="fecha"/>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12"><button (click)="addTicket()" class="btn btn-primary h3 pull-right">Confirmar</button>
+    </div>
+  </div>
 </div>
-	     <div id="top" class="row">
 
-		    <div class="col-md-3">
-		    </div>
-		    <div class="col-md-8">
-		        <div class="input-group h2">
-		            <input name="data[search]" class="form-control" id="search" type="text" placeholder="Buscar Tickets">
-		            <span class="input-group-btn">
-                		<button class="btn btn-primary" type="submit">
-		                    <span class="glyphicon glyphicon-search"></span>
-                		</button>
-		            </span>
-		        </div>
-		    </div>
+<div class="row">
+  <div class="col-md-1">
+    &nbsp;
+  </div>
+  <div class="col-md-8">
+        <div class="input-group h2">
+            <input name="data[search]" class="form-control" id="search" type="text" placeholder="Buscar Tickets">
+            <span class="input-group-btn">
+                <button class="btn btn-primary" type="submit">
+                    <span class="glyphicon glyphicon-search"></span>
+                </button>
+            </span>
+        </div>
+    </div>
+    <div class="col-md-3">
+        &nbsp;<a *ngIf="this.action==''" routerLink="/tickets/new" routerLinkActive="active"  class="btn btn-primary pull-left h2">Nuevo Ticket</a>
+    </div>
+</div>
 
-		    <div class="col-md-1">
-		        <a href="add.html" class="btn btn-primary pull-right h2">Nuevo Ticket</a>
-		    </div>
+<div id="top" class="row">
+<hr />
+</div>
 
-	     </div> <!-- /#top -->
+<div id="list" class="row">
+  <div class="table-responsive col-md-12">
+    <table class="table table-striped" cellspacing="0" cellpadding="0">
+      <thead>
+        <tr>
+            <th>ID</th>
+            <th>Cliente</th>
+            <th>Vendedor</th>
+            <th>Fecha</th>
+            <th class="actions">Acciones</th>
+            <th>Estado</th>
+          </tr>
+      </thead>
+      <tbody *ngIf="tickets.length > 0">
+        <tr *ngFor="let ticket of tickets" [class.completed]="ticket.complete">
+          <td>{{ticket.id}}</td>
+          <td>{{ticket.client}}</td>
+          <td>{{ticket.amount}} $</td>
+          <td>{{ticket.date | date:'fullDate' }}</td>
+          <td class="actions">
+              <a class="btn btn-success btn-xs" [routerLink]="['/tickets/edit', ticket._id]" >Ver</a>
+              <a class="btn btn-warning btn-xs" [routerLink]="['/tickets/edit', ticket._id]" >Editar</a>
+          </td>
+          <td>Sincronizado <span align="right"><i class="fa fa-rss" aria-hidden="true"></i></span></td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
 
-	     <hr />
-	     <div id="list" class="row">
-		   <div class="table-responsive col-md-12">
-             <input class="new-ticket" placeholder="Client" autofocus="" [(ngModel)]="newTicket.client" (keyup.enter)="addTicket()">
-    <input class="new-ticket" placeholder="Amount" autofocus="" [(ngModel)]="newTicket.amount" (keyup.enter)="addTicket()"/>
-    <input class="new-ticket" placeholder="Date" autofocus="" [(ngModel)]="newTicket.date" (keyup.enter)="addTicket()"/>
-		        <table class="table table-striped" cellspacing="0" cellpadding="0">
-		            <thead>
-                		<tr>
-		                    <th>ID</th>
-                		    <th>Cliente</th>
-		                    <th>Vendedor</th>
-                		    <th>Fecha</th>
-		                    <th class="actions">Acciones</th>
-                		    <th>Estado</th>
-		                 </tr>
-		            </thead>
-		            <tbody *ngIf="tickets.length > 0">
-                		<tr *ngFor="let ticket of tickets" [class.completed]="ticket.complete">
-		                    <td>{{id}}</td>
-                		    <td>{{ticket.client}}</td>
-		                    <td>{{ticket.amount}} $</td>
-                		    <td>{{ticket.date}}</td>
-		                    <td class="actions">
-                		        <a class="btn btn-success btn-xs" href="view.html">Ver</a>
-		                        <a class="btn btn-warning btn-xs" href="edit.html">Editar</a>
-		                    </td>
-				                <td>Sincronizado <span align="right"><i class="fa fa-rss" aria-hidden="true"></i></span></td>
-		                </tr>
-		            </tbody>
-		         </table>
-		     </div>
-	     </div> <!-- /#list -->
+</div> <!-- /#list -->
  <!--
 	     <div id="bottom" class="row">
 
@@ -78,21 +101,21 @@
        <!-- /#bottom -->
 
 		<!-- Modal -->
-		<div class="modal fade" id="delete-modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel">
-		    <div class="modal-dialog" role="document">
-		        <div class="modal-content">
-		            <div class="modal-header">
-		                <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><span aria-hidden="true">&times;</span></button>
-                		<h4 class="modal-title" id="modalLabel">Borrar Item</h4>
-		            </div>
-		            <div class="modal-body">Desea realmente borrar este item? </div>
-			            <div class="modal-footer">
-			                <button type="button" class="btn btn-primary">Si</button>
-			                <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
-			            </div>
-			    </div>
-			</div>
-		</div>
+<div class="modal fade" id="delete-modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="modalLabel">Borrar Item</h4>
+            </div>
+            <div class="modal-body">Desea realmente borrar este item? </div>
+              <div class="modal-footer">
+                  <button type="button" class="btn btn-primary">Si</button>
+                  <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+              </div>
+      </div>
+  </div>
+</div>
 
 <!--
 <section class="ticketapp">

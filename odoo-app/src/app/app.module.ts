@@ -21,7 +21,12 @@ import { PageNotFoundComponent } from './not-found.component';
 import { LoginComponent }       from './login.component';
 import { LocalStorageModule } from 'angular-2-local-storage';
 //var ngSQLite = require('angular-sqlite');
-
+import {DropdownModule} from "ngx-dropdown";
+import { CollapseDirective } from 'ng2-bootstrap'
+import { ModalModule } from 'angular2-modal';
+import { BootstrapModalModule } from 'angular2-modal/plugins/bootstrap';
+import { Ng2UIModule }    from 'ng2-ui';
+import { Ng2UtilsModule } from 'ng2-utils';
 
 @NgModule({
   declarations: [
@@ -33,7 +38,8 @@ import { LocalStorageModule } from 'angular-2-local-storage';
     HomeComponent,
     AboutComponent,
     PageNotFoundComponent,
-    LoginComponent
+    LoginComponent,
+    CollapseDirective
   ],
   imports: [
     LocalStorageModule.withConfig({
@@ -45,12 +51,19 @@ import { LocalStorageModule } from 'angular-2-local-storage';
     BrowserModule,
     FormsModule,
     HttpModule,
-    Ng2PaginationModule
+    Ng2PaginationModule,
+    DropdownModule,
+    ModalModule.forRoot(),
+    BootstrapModalModule,
+    Ng2UIModule,
+    Ng2UtilsModule
+
   ],
   providers: [
   ],
   bootstrap: [AppComponent]
 })
+
 export class AppModule {
 
 

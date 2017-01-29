@@ -1,5 +1,6 @@
 import { NgModule }             from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 
 import { TicketsAppComponent } from './tickets-app/tickets-app.component';
 import { ClientesComponent } from './clientes/clientes.component';
@@ -17,6 +18,8 @@ const appRoutes: Routes = [
   { path: 'clientes', component: ClientesComponent, data: { title: 'Odoo-app Moldeo / Clientes' } },
   { path: 'productos', component: ProductosComponent, data: { title: 'Odoo-app Moldeo / Productos' } },
   { path: 'tickets', component: TicketsAppComponent, data: { title: 'Odoo-app Moldeo / Tickets' } },
+  { path: 'tickets/new', component: TicketsAppComponent, data: { title: 'Odoo-app Moldeo / Nuevo Ticket', action: 'new' } },
+  { path: 'tickets/edit/:id', component: TicketsAppComponent, data: { title: 'Odoo-app Moldeo / Editar Ticket', action: 'edit' } },
   { path: 'about', component: AboutComponent, data: { title: 'Odoo-app Moldeo / Acerca' } },
   { path: '**', component: PageNotFoundComponent },
 ];

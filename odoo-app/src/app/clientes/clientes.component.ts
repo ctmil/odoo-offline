@@ -19,14 +19,16 @@ export class ClientesComponent implements OnInit,OnDestroy {
   message = "Clientes (loading...)"
   cx_clientesDatabaseUpdated_sub: Subscription;
   table_id: string = "res.partner";
+  table_filters: any = [['is_company', '=', true], ['customer', '=', true]];
+  table_fields: any = ['name', 'phone', 'email', 'comment','document_number'];
 
   constructor( private CxService : ConexionService, private cd: ChangeDetectorRef ) {
     this.CxService.getDocs( this.table_id, (res) => {
       if (this.CxService.pdb[this.table_id]["cache_records"].length==0) {
 
         this.CxService.fetchOdooTable(this.table_id,
-           [['is_company', '=', true], ['customer', '=', true]],
-           ['name', 'phone', 'email', 'comment','document_number'],
+           this.table_filters,
+           this.table_fields,
           0,
           5000,
           () => {

@@ -19,13 +19,15 @@ export class ProductosComponent implements OnInit, OnDestroy {
   message = "Productos (loading...)"
   cx_productosDatabaseUpdated_sub: Subscription;
   table_id: string = "product.product";
+  table_filters: any = [];
+  table_fields: any = ['name','default_code','lst_price','qty_available'];
 
   constructor( private CxService: ConexionService, private cd: ChangeDetectorRef ) {
     this.CxService.getDocs( this.table_id, (res) => {
       if (this.CxService.pdb[this.table_id]["cache_records"].length==0) {
         this.CxService.fetchOdooTable(this.table_id,
-          [],//['is_company', '=', true], ['customer', '=', true]
-          ['name','default_code','lst_price','qty_available'],
+          this.table_filters,
+          this.table_fields,
           0,
           5000,
           () => {
@@ -42,11 +44,12 @@ export class ProductosComponent implements OnInit, OnDestroy {
         'test1': { name: 'test1 ' },
         'test2': { name: 'test2' }
       };*/
-    //var product_product = this.Con.getTableAsArray("product.product");
+    var table_records = this.CxService.getTableAsArray(this.table_id);
+    return table_records;
     //console.log("calling get productos >", product_product);
     //return product_product;
     //return this.CxService.productos;
-    return this.CxService.pdb[this.table_id]['cache_records'];
+    //return this.CxService.pdb[this.table_id]['cache_records'];
 }
 
   ngOnInit() {

@@ -49,6 +49,8 @@ export class ConexionService {
     password: ""
   });
 
+  dbsyncoptions: any = { live: true, retry: true };
+
   Ox = new odooxmlrpc({});
 
   constructor(private lSS: LocalStorageService) {
@@ -61,16 +63,32 @@ export class ConexionService {
       //console.log("storageType: " + storageType);
     }
 
+    this.pdb['tickets'] = {
+      'key_name': [ "id", "client" ],
+      'db': new PouchDB("tickets"),
+      'dbsync': "http://localhost:5984/tickets",
+      'updated': new BehaviorSubject(false),
+      'cache_records': [],
+      'lastsync': '',
+      'len': 0,
+    };
+    this.pdb['tickets'].updated$ = this.pdb['tickets'].updated.asObservable();
+    //this.pdb['res.partner'].db.replicate.to('http://localhost:5984/res_partner');
+    this.pdb['tickets'].db.sync(  this.pdb['tickets']['dbsync'],
+                                            this.dbsyncoptions);
 
     this.pdb['res.partner'] = {
       'key_name': [ "id", "name" ],
       'db': new PouchDB("res.partner"),
+      'dbsync': "http://localhost:5984/res_partner",
       'updated': new BehaviorSubject(false),
       'cache_records': [],
       'lastsync': '',
       'len': 0,
     };
     this.pdb['res.partner'].updated$ = this.pdb['res.partner'].updated.asObservable();
+    //this.pdb['res.partner'].db.replicate.to('http://localhost:5984/res_partner');
+    this.pdb['res.partner'].db.sync( this.pdb['res.partner']['dbsync'],this.dbsyncoptions);
 
     this.pdb_clientes = this.pdb['res.partner'].db;
     this.clientes = this.pdb['res.partner'].cache_records;
@@ -78,12 +96,16 @@ export class ConexionService {
     this.pdb['product.product'] = {
       'key_name': [ "default_code", "name" ],
       'db': new PouchDB("product.product"),
+      'dbsync': "http://localhost:5984/product_product",
       'updated': new BehaviorSubject(false),
       'cache_records': [],
       'lastsync': '',
       'len': 0,
     };
     this.pdb['product.product'].updated$ = this.pdb['product.product'].updated.asObservable();
+    //this.pdb['product.product'].db.replicate.to('http://localhost:5984/product_product');
+    this.pdb['product.product'].db.sync(this.pdb['product.product']['dbsync'],this.dbsyncoptions);
+
 
     this.pdb_productos = this.pdb['product.product'].db;
     this.productos = this.pdb['product.product'].cache_records;
@@ -184,6 +206,25 @@ submit(key, val) {
     return this.getDocs('res.partner', callback );
   }
 
+  getDoc(table_id: string, record_id: string, callback?:any) {
+
+    this.pdb[table_id]['db'].get(record_id).catch((err1) => {
+
+      if (err1.name === 'not_found') {
+        console.log("CxService::getDoc > not found!", record_id)
+        if (callback) callback(err1);
+        return;
+      }
+      if (callback) callback(err1);
+
+    }).then( (res_doc) => {
+      console.log("CxService::getDoc > found!", res_doc);
+      if (callback) callback(res_doc);
+      return res_doc;
+    });
+
+  }
+
 
   getDocs( table_id, callback ) {
     console.log(`CxService::getDocs(${table_id})`);
@@ -260,17 +301,25 @@ submit(key, val) {
 
   saveDoc( table_id: string, doc: any, callback: any) {
 
-    //console.log(`CxService::saveDoc(${table_id},${doc._id})`);
-
+    console.log(`CxService::saveDoc(${table_id},${doc._id})`);
+    if (this.pdb[table_id]["key_name"]) {
+      var key_id_name = this.pdb[table_id]["key_name"];
+      if (doc["_id"]==undefined) {
+        doc["_id"] = this.setId(key_id_name, doc);
+        console.log("key_id_name: ",key_id_name);
+      }
+    }
+    console.log(`CxService::saveDoc(${table_id},${doc._id})`);
     this.pdb[table_id]['db'].get(doc["_id"]).catch( (err1) => {
 
       if (err1.name === 'not_found') {
 
         //console.log("CxService::saveDoc > ok not found create it!", doc["_id"], err.name);
 
-        this.pdb[table_id]['db'].put(doc).then(function(response) {
+        this.pdb[table_id]['db'].put(doc).then((response) => {
 
-          console.log(`CxService::saveDoc > posted !! ${doc._id}`);
+          console.log(`CxService::saveDoc(${table_id},${doc._id}) > posted !!`,this);
+          this.pdb[table_id]['cache_records'].push(doc);
           if (callback) callback(response);
 
         }).catch(function(err) {
@@ -289,9 +338,16 @@ submit(key, val) {
         //console.log("CxService::saveDoc get founded! Next?", result_doc["_id"], result_doc);
         doc["_rev"] = result_doc["_rev"];
         //console.log("CxService::saveDoc > update it! With:", cliente, self.pdb_clientes);
-        this.pdb[table_id]['db'].put(doc).then(function(response) {
+        this.pdb[table_id]['db'].put(doc).then((response) => {
 
-          console.log(`CxService::saveDoc > updated !! ${doc._id}`);
+          console.log(`CxService::saveDoc > updated !! ${doc._id}`, this);
+          for( var i in this.pdb[table_id]['cache_records'] ) {
+            var r = this.pdb[table_id]['cache_records'][i];
+            if (r._id == doc._id) {
+              this.pdb[table_id]['cache_records'][i] = doc;
+              console.log(`CxService::saveDoc > cache_records updated !! ${doc._id}`);
+            }
+          }
           if (callback) callback(response);
 
         }).catch(function(err) {
@@ -362,15 +418,12 @@ saveProducto(producto: any) {
     return table_hash;
   }
 
-  getTableAsArray(table_id) {
+  getTableAsArray( table_id: string ) {
     var table_array: Cliente[] = [];
 
-    if (table_id == "res.partner") {
-      //var t = this.getClientes();
-      //console.log("res.partner:", t);
-      //return table_array;
-      return this.clientes;
-  }
+    if (table_id in this.pdb) {
+      return this.pdb[table_id]["cache_records"];
+    }
 
     var table_hash = this.getTable(table_id);
 
@@ -515,6 +568,10 @@ saveProducto(producto: any) {
     } else {
       this.message.next("Debe completar todos los campos.");
     }
+  }
+
+  Desconectar() {
+    this.connectedOk.next(false);
   }
 
   cleanConexionData() {

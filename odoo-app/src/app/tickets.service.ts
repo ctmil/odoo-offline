@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import {Tickets} from './tickets';
+import { ConexionService } from './conexion.service';
 
 @Injectable()
 export class TicketsService {
@@ -7,19 +8,52 @@ export class TicketsService {
   // Placeholder for last id so we can simulate
   // automatic incrementing of id's
   lastId: number = 0;
+  table_id: string = "tickets";
 
   // Placeholder for todo's
   tickets: Tickets[] = [];
 
-  constructor() {
+  constructor( private CxService : ConexionService ) {
+    this.fetchTickets();
   }
 
+  fetchTickets(callback?:any) {
+
+    this.CxService.getDocs(this.table_id, (res) => {
+      console.log("TicketsService > ", this.CxService.pdb[this.table_id]);
+      if (callback) callback(res);
+    });
+
+  }
+
+
+
   // Simulate POST /todos
-  addTicket(ticket: Tickets): TicketsService {
+  addTicket(ticket: Tickets, callback?: any): TicketsService {
     if (!ticket.id) {
       ticket.id = ++this.lastId;
     }
     this.tickets.push(ticket);
+
+    if (String(ticket.client).trim() == '') {
+      return;
+    }
+
+    this.CxService.saveDoc("tickets", ticket, (res) => {
+      if ("error" in res) {
+        if (res.error) {
+          console.error("Ticket addition error", res);
+          if (callback) callback(res);
+          return;
+        }
+      }
+      console.log("Ticket addition ok", res);
+
+      if (callback) callback(res);
+      //this.CxService.getDoc()
+    } );
+
+
     return this;
   }
 
@@ -42,7 +76,8 @@ export class TicketsService {
 
   // Simulate GET /todos
   getAllTickets(): Tickets[] {
-    return this.tickets;
+    return this.CxService.getTableAsArray('tickets');
+    //return this.tickets;
   }
 
   // Simulate GET /todos/:id
