@@ -3,6 +3,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import 'rxjs/add/operator/switchMap';
+import { Subscription }   from 'rxjs/Subscription';
 
 
 import { Tickets } from '../tickets';
@@ -23,6 +24,7 @@ export class TicketsAppComponent implements OnInit {
   message = "Tickets"
   newTicket: Tickets = new Tickets();
   action: string = "";
+  subparam: Subscription;
 
   constructor(
     private ticketsService: TicketsService,
@@ -59,6 +61,21 @@ export class TicketsAppComponent implements OnInit {
   }
   ngOnInit() {
 
+    this.subparam = this.route.params.subscribe( data => {
+      console.log("TicketsComponent > params subscribed!", data);
+        var id = data["id"];
+        if (id) {
+          this.CxService.getDoc("tickets", id, (response) => {
+            if ("error" in response) {
+              console.log("Errors in edit:", response);
+            } else {
+              console.log("Editing OK >>>", response);
+              this.newTicket = response;
+             }
+          }  );
+        }
+    });
+
 /**this.route.params
     // (+) converts string 'id' to a number
     .switchMap((params: Params) => this.service.getHero(+params['id']))
@@ -72,35 +89,8 @@ export class TicketsAppComponent implements OnInit {
       }
 
       if (this.action == "edit") {
-          // (+) converts string 'id' to a number
-          // this.route.params
         this.message = "Editando Ticket";
         console.log("this.route.params:", this.route.params, this.route.snapshot.params);
-        //var id = this.route.params
-        //  .map( params => { console.log("params:",params,params['id']);  } );
-        /*.switchMap((value: Params, id: number) => {
-          console.log("params:");
-        }).subscribe((va) => {
-          console.log("subscribed:");
-        });*/
-        var id = this.route.snapshot.params["id"];
-        if (id) {
-          this.CxService.getDoc("tickets", id, (response) => {
-            if ("error" in response) {
-              console.log("Errors in edit:", response);
-            } else {
-              console.log("Editing OK >>>", response);
-              this.newTicket = response;
-             }
-          }  );
-        }
-
-
-        /*.switchMap((params: Params, index: number ) => {
-          console.log("smap:params_ids:", params['id']);
-          });
-          */
-          //.subscribe((hero: Hero) => this.hero = hero);
       }
 
     } else this.action = "";
