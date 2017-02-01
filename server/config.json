@@ -1,1 +1,7 @@
-/home/gustavo/work/blancoamor/couchdb/config.json
+{
+"url" : "http://localhost:8069",
+"database": "tst_couchdb",
+"username": "admin",
+"password": "admin",
+"couchdb": "http://jan:apple@localhost:5984/"
+}
