@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
-
 import { LocalStorageService } from 'angular-2-local-storage';
+import { Subject }    from 'rxjs/Subject';
+import {  BehaviorSubject }    from 'rxjs/BehaviorSubject';
 
 import { Cliente } from './cliente';
 import { ClientesService } from './clientes.service';
 import { Producto } from './producto';
 import { ProductosService } from './productos.service';
 import { ConexionData } from './conexion-data';
-import { Subject }    from 'rxjs/Subject';
-import {  BehaviorSubject }    from 'rxjs/BehaviorSubject';
+
 
 var odooxmlrpc = require('odoo-xmlrpc');
 var PouchDB = require('pouchdb');
