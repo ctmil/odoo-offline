@@ -1,0 +1,1 @@
+/home/gustavo/work/blancoamor/couchdb/upload_couchdb.py
