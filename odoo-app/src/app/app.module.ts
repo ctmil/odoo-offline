@@ -8,8 +8,8 @@ import { HttpModule } from "@angular/http";
 import {Ng2PaginationModule} from 'ng2-pagination'; // <-- import the module
 
 import { AppComponent } from './app.component';
-import { AppRoutingModule } from './app-route.module';
-import { LoginRoutingModule } from './login-route.module';
+import { AppRoutingModule } from './routing/app-route.module';
+import { LoginRoutingModule } from './routing/login-route.module';
 
 import { TicketsAppComponent } from './tickets-app/tickets-app.component';
 import { ClientesComponent } from './clientes/clientes.component';
