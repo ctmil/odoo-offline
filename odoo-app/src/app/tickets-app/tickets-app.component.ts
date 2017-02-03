@@ -7,6 +7,8 @@ import { Subscription }   from 'rxjs/Subscription';
 
 
 import { Tickets } from '../tickets';
+import { TicketItem } from '../ticket-item';
+import { TicketItems } from "../ticket-items";
 import { TicketsService } from '../tickets.service';
 import { ConexionService } from '../conexion.service';
 
@@ -32,7 +34,20 @@ export class TicketsAppComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private cd: ChangeDetectorRef) {
+    //this.newTicket.items.push(new TicketItem());
+    /*this.newTicket.items.push(
+      {
+        id: 111,
+        product_id: 1,
+        product_name: "yeah",
+        product_qty: 1,
+        product_unit_price: 123
 
+      });*/
+  }
+
+  onNotify( event : any ) {
+    console.log("TicketsAppComponent > onNotify");
   }
 
   addTicket() {
@@ -48,17 +63,21 @@ export class TicketsAppComponent implements OnInit {
 
   }
 
-  toggleTicketComplete(ticket) {
-    this.ticketsService.toggleTicketComplete(ticket);
-  }
-
   removeTicket(ticket) {
-    this.ticketsService.deleteTicketById(ticket.id);
+    this.ticketsService.deleteTicket(ticket, (res) => {
+      this.cd.markForCheck();
+      this.cd.detectChanges();
+      console.log(res);
+      //this.newTicket = new Tickets();
+      this.router.navigateByUrl("/tickets");
+    });
   }
 
   get tickets() {
+    //console.log("calling tickets!", this.ticketsService.getAllTickets());
     return this.ticketsService.getAllTickets();
   }
+
   ngOnInit() {
 
     this.subparam = this.route.params.subscribe( data => {
@@ -69,8 +88,13 @@ export class TicketsAppComponent implements OnInit {
             if ("error" in response) {
               console.log("Errors in edit:", response);
             } else {
-              console.log("Editing OK >>>", response);
+              console.log(this.action+" OK >>>", response);
               this.newTicket = response;
+              if (this.newTicket["items"] == undefined) {
+                this.newTicket.items = [];
+              }
+              this.cd.markForCheck();
+              this.cd.detectChanges();
              }
           }  );
         }
@@ -90,6 +114,11 @@ export class TicketsAppComponent implements OnInit {
 
       if (this.action == "edit") {
         this.message = "Editando Ticket";
+        console.log("this.route.params:", this.route.params, this.route.snapshot.params);
+      }
+
+      if (this.action == "delete") {
+        this.message = "Eliminando Ticket!!";
         console.log("this.route.params:", this.route.params, this.route.snapshot.params);
       }
 

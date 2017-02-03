@@ -90,17 +90,5 @@ describe('TicketsService', () => {
 
   });
 
-  describe('#toggleTicketComplete(todo)', () => {
-
-    it('should return the updated ticket with inverse complete status', inject([TicketsService], (service: TicketsService) => {
-      let ticket = new Tickets({client: 'Hello 1', amount: '11.22',complete: false});
-      service.addTicket(ticket);
-      let updatedTicket = service.toggleTicketComplete(ticket);
-      expect(updatedTicket.complete).toEqual(true);
-      service.toggleTicketComplete(ticket);
-      expect(updatedTicket.complete).toEqual(false);
-    }));
-
-  });
 
 });

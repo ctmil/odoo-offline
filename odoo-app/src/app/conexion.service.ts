@@ -5,6 +5,7 @@ import {  BehaviorSubject }    from 'rxjs/BehaviorSubject';
 
 import { Cliente } from './cliente';
 import { ClientesService } from './clientes.service';
+import { Tickets } from './tickets';
 import { Producto } from './producto';
 import { ProductosService } from './productos.service';
 import { ConexionData } from './conexion-data';
@@ -206,6 +207,25 @@ submit(key, val) {
     return this.getDocs('res.partner', callback );
   }
 
+  removeDoc(table_id: string, record_id: string, callback?: any) {
+
+    this.pdb[table_id]['db'].get(record_id).then( (res_doc) => {
+      console.log("CxService::getDoc > found! deleting", res_doc);
+      this.pdb[table_id]['db'].remove(res_doc);
+      if (callback) callback(res_doc);
+      //return res_doc;
+    }).catch((err1) => {
+
+      if (err1.name === 'not_found') {
+        console.log("CxService::getDoc > not found!", record_id)
+        if (callback) callback(err1);
+        return;
+      }
+      if (callback) callback(err1);
+
+    });
+  }
+
   getDoc(table_id: string, record_id: string, callback?:any) {
 
     this.pdb[table_id]['db'].get(record_id).catch((err1) => {
@@ -233,7 +253,12 @@ submit(key, val) {
       this.pdb[table_id]['cache_records'] = [];
       //console.log("getDocs > allDocs > result:", result);
       for (var row in result.rows) {
-        this.pdb[table_id]['cache_records'].push( result.rows[row]['doc'] );
+        var R: any = result.rows[row]['doc'];
+        if (table_id == "tickets") {
+          var T: Tickets = new Tickets(R);
+          this.pdb[table_id]['cache_records'].push( T );
+        } else
+          this.pdb[table_id]['cache_records'].push( R );
         //console.log("CxService::getDocs row:", row, result.rows[row]);
       }
       //let pdb_cache = this.pdb[table_id]['cache_records'];

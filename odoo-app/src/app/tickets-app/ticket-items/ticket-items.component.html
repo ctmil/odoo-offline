@@ -1,0 +1,46 @@
+<div id="list" class="row">
+  <div class="table-responsive col-md-12">
+    <table class="table table-striped" cellspacing="0" cellpadding="0">
+      <thead>
+        <tr>
+            <th>ID</th>
+            <th>Producto</th>
+            <th>Cantidad</th>
+            <th>PrecioxU</th>
+            <th>Precio</th>
+            <th class="actions">Acciones</th>
+        </tr>
+      </thead>
+      <tbody *ngIf="p_TicketItems.length >= 0">
+        <tr>
+          <td><input type="hidden" placeholder="ID" [(ngModel)]="newItem.id"></td>
+          <td><input type="text" placeholder="Nombre Producto" [(ngModel)]="newItem.product_name"><input type="text" placeholder="Producto Id" [(ngModel)]="newItem.product_id"></td>
+          <td><input type="text" placeholder="Cantidad" [(ngModel)]="newItem.product_qty"></td>
+          <td><input type="text" placeholder="PrecioxU" [(ngModel)]="newItem.product_unit_price"></td>
+          <td></td>
+          <td class="actions">
+              <a class="btn btn-primary btn-xs" (click)="addTicketItem(newItem)" title="Agregar">++</a>
+          </td>
+      </tr>
+        <tr *ngFor="let Item of p_TicketItems">
+          <td>{{Item.id}}</td>
+          <td>{{Item.product_name}} [{{Item.product_id}}]</td>
+          <td><span *ngIf="!isEditing(Item)">{{Item.product_qty}}</span><input *ngIf="isEditing(Item)" type="text" placeholder="Cantidad" [(ngModel)]="editItem.product_qty"></td>
+          <td><span *ngIf="!isEditing(Item)">{{Item.product_unit_price}} $</span><input *ngIf="isEditing(Item)" type="text" placeholder="PrecioxU" [(ngModel)]="editItem.product_unit_price"></td>
+          <td>{{Item.product_unit_price*Item.product_qty}} $</td>
+          <td class="actions">
+              <a *ngIf="!isEditing(Item)" class="btn btn-primary btn-xs" (click)="editTicketItem(Item)" >Editar</a>
+              <a *ngIf="!isEditing(Item)" class="btn btn-warning btn-xs" (click)="removeTicketItem(Item)" >Borrar</a>
+              <a *ngIf="isEditing(Item)" class="btn btn-warning btn-xs" (click)="saveTicketItem(editItem)" >Guardar</a>
+          </td>
+      </tr>
+      <tr>
+          <td colspan="4"></td>
+          <td colspan="1">Total</td>
+          <td colspan="1">{{items_total}} $</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>

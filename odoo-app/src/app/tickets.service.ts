@@ -1,5 +1,8 @@
 import { Injectable } from '@angular/core';
-import {Tickets} from './tickets';
+import { Tickets } from './tickets';
+import { TicketItem } from './ticket-item';
+import { TicketItems } from "./ticket-items";
+
 import { ConexionService } from './conexion.service';
 
 @Injectable()
@@ -57,13 +60,25 @@ export class TicketsService {
     return this;
   }
 
-  // Simulate DELETE /todos/:id
-  deleteTicketById(id: number): TicketsService {
-    this.tickets = this.tickets
-      .filter(ticket => ticket.id !== id);
-    return this;
-  }
+  deleteTicketById(ticket_id: any, callback?: any) {
+    this.CxService.removeDoc("tickets", ticket_id, (res) => {
+      if ("error" in res) {
+        if (res.error) {
+          console.error("Ticket removal error", res);
+          if (callback) callback(res);
+          return;
+        }
+      }
+      console.log("Ticket removal ok", res);
 
+      if (callback) callback(res);
+      //this.CxService.getDoc()
+    } );
+  }
+  // Simulate DELETE /todos/:id
+  deleteTicket(ticket: Tickets, callback?: any) {
+    this.deleteTicketById(ticket["_id"], callback);
+  }
   // Simulate PUT /todos/:id
   updateTicketById(id: number, values: Object = {}): Tickets {
     let ticket = this.getTicketById(id);
@@ -87,12 +102,5 @@ export class TicketsService {
       .pop();
   }
 
-  // Toggle todo complete
-  toggleTicketComplete(ticket: Tickets){
-    let updatedTicket = this.updateTicketById(ticket.id, {
-      complete: !ticket.complete
-    });
-    return updatedTicket;
-  }
 
 }

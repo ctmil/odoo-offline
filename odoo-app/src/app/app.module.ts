@@ -12,6 +12,7 @@ import { AppRoutingModule } from './routing/app-route.module';
 import { LoginRoutingModule } from './routing/login-route.module';
 
 import { TicketsAppComponent } from './tickets-app/tickets-app.component';
+import { TicketItemsComponent } from './tickets-app/ticket-items/ticket-items.component';
 import { ClientesComponent } from './clientes/clientes.component';
 import { ProductosComponent } from './productos/productos.component';
 import { ConexionComponent } from './conexion/conexion.component';
@@ -21,7 +22,7 @@ import { PageNotFoundComponent } from './not-found.component';
 import { LoginComponent }       from './login.component';
 import { LocalStorageModule } from 'angular-2-local-storage';
 //var ngSQLite = require('angular-sqlite');
-import {DropdownModule} from "ngx-dropdown";
+import { DropdownModule } from "ngx-dropdown";
 import { CollapseDirective } from 'ng2-bootstrap'
 import { ModalModule } from 'angular2-modal';
 import { BootstrapModalModule } from 'angular2-modal/plugins/bootstrap';
@@ -33,6 +34,7 @@ import { Ng2UtilsModule } from 'ng2-utils';
     AppComponent,
     ConexionComponent,
     TicketsAppComponent,
+    TicketItemsComponent,
     ClientesComponent,
     ProductosComponent,
     HomeComponent,

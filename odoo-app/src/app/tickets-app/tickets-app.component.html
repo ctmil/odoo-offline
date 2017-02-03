@@ -12,8 +12,8 @@
           <input class="form-control" placeholder="Client" autofocus="" [(ngModel)]="newTicket.client" (keyup.enter)="addTicket()" name="cliente"/>
       </div>
       <div class="form-group col-md-3">
-        <label for="amount">Monto</label>
-        <input class="form-control" placeholder="Amount"  autofocus="" [(ngModel)]="newTicket.amount" (keyup.enter)="addTicket()" name="amount"/>
+        <label for="amount">Vendedor</label>
+        <input class="form-control" placeholder="Vendedor"  autofocus="" [(ngModel)]="newTicket.seller" (keyup.enter)="addTicket()" name="seller"/>
       </div>
       <div class="form-group col-md-3">
         <label for="fecha">Fecha</label>
@@ -22,7 +22,13 @@
     </div>
   </div>
   <div class="row">
-    <div class="col-md-12"><a routerLink="/" routerLinkActive="active" class="btn btn-primary h3 pull-left">Cancelar</a><button (click)="addTicket()" class="btn btn-primary h3 pull-right">Confirmar</button>
+    <div class="col-md-12">
+        <ticket-items [p_TicketItems]="newTicket.items" (notify)='onNotify($event)'></ticket-items>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12"><a routerLink="/" routerLinkActive="active" class="btn btn-primary h3 pull-left">Cancelar</a><button *ngIf="this.action!='delete'" (click)="addTicket()" class="btn btn-primary h3 pull-right">Confirmar</button>
+    <button *ngIf="this.action=='delete'" (click)="removeTicket(newTicket)" class="btn btn-warning h3 pull-right">Borrar</button>
     </div>
   </div>
 </div>
@@ -43,6 +49,7 @@
     </div>
     <div class="col-md-3">
         &nbsp;<a *ngIf="this.action==''" routerLink="/tickets/new" routerLinkActive="active"  class="btn btn-primary pull-left h2">Nuevo Ticket</a>
+
     </div>
 </div>
 
@@ -58,20 +65,25 @@
             <th>ID</th>
             <th>Cliente</th>
             <th>Vendedor</th>
+            <th>Items</th>
+            <th>Monto</th>
             <th>Fecha</th>
             <th class="actions">Acciones</th>
             <th>Estado</th>
           </tr>
       </thead>
       <tbody *ngIf="tickets.length > 0">
-        <tr *ngFor="let ticket of tickets" [class.completed]="ticket.complete">
+        <tr *ngFor="let ticket of tickets">
           <td>{{ticket.id}}</td>
           <td>{{ticket.client}}</td>
+          <td>{{ticket.vendedor}}</td>
+          <td>{{ticket.items.length}}</td>
           <td>{{ticket.amount}} $</td>
           <td>{{ticket.date | date:'fullDate' }}</td>
           <td class="actions">
               <a class="btn btn-success btn-xs" [routerLink]="['/tickets/edit', ticket._id]" >Ver</a>
               <a class="btn btn-warning btn-xs" [routerLink]="['/tickets/edit', ticket._id]" >Editar</a>
+              <a class="btn btn-warning btn-xs" [routerLink]="['/tickets/delete', ticket._id]" >Borrar</a>
           </td>
           <td>Sincronizado <span align="right"><i class="fa fa-rss" aria-hidden="true"></i></span></td>
       </tr>
@@ -117,27 +129,3 @@
   </div>
 </div>
 
-<!--
-<section class="ticketapp">
-  <header class="header">
-    <h1></h1>
-    <input class="new-ticket" placeholder="Client" autofocus="" [(ngModel)]="newTicket.client" (keyup.enter)="addTicket()">
-    <input class="new-ticket" placeholder="Amount" autofocus="" [(ngModel)]="newTicket.amount" (keyup.enter)="addTicket()"/>
-    <input class="new-ticket" placeholder="Date" autofocus="" [(ngModel)]="newTicket.date" (keyup.enter)="addTicket()"/>
-  </header>
-  <section class="main" *ngIf="tickets.length > 0">
-    <ul class="tickets-list">
-      <li *ngFor="let ticket of tickets" [class.completed]="ticket.complete">
-        <div class="view">
-          <input class="toggle" type="checkbox" (click)="toggleTicketComplete(todo)" [checked]="ticket.complete">
-          <label>{{ticket.client}} - {{ticket.amount}} $ - {{ticket.date}}</label>
-          <button class="destroy" (click)="removeTicket(ticket)"></button>
-        </div>
-      </li>
-    </ul>
-  </section>
-  <footer class="footer" *ngIf="tickets.length > 0">
-    <span class="tickets-count"><strong>{{tickets.length}}</strong> {{tickets.length == 1 ? 'item' : 'items'}} left</span>
-  </footer>
-</section>
--->

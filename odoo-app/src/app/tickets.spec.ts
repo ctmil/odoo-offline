@@ -13,15 +13,13 @@ describe('Tickets', () => {
     let tickets = new Tickets({
       id: 234,
       date: new Date(),
-      amount: 123.45,
       client: 'NewClient',
-      complete: false,
+      seller: 'NewSeller',
     });
     expect(tickets.client).toEqual('NewClient');
+    expect(tickets.seller).toEqual('NewSeller');
     expect(tickets.id).toEqual(234);
     //expect(tickets.date).toEqual(234);
-    expect(tickets.amount).toEqual(123.45);
-    expect(tickets.complete).toEqual(false);
   });
 
 });
