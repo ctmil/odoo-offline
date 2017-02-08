@@ -111,11 +111,16 @@ export class ConexionService {
     this.pdb_productos = this.pdb['product.product'].db;
     this.productos = this.pdb['product.product'].cache_records;
 
-
-
-
     this.fetchConexionData();
     this.Conectar(this.ConnData);
+
+    this.getDocs("tickets", (res) => {
+      this.getDocs("res.partner", (res) => {
+        this.getDocs("product.product", (res) => {
+
+        });
+      });
+    });
 
     console.log("ConexionService > constructor end!", this);
 
