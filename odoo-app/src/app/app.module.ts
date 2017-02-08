@@ -28,6 +28,8 @@ import { ModalModule } from 'angular2-modal';
 import { BootstrapModalModule } from 'angular2-modal/plugins/bootstrap';
 import { Ng2UIModule }    from 'ng2-ui';
 import { Ng2UtilsModule } from 'ng2-utils';
+import { Ng2AutoCompleteModule } from 'ng2-auto-complete';
+
 
 @NgModule({
   declarations: [
@@ -58,7 +60,8 @@ import { Ng2UtilsModule } from 'ng2-utils';
     ModalModule.forRoot(),
     BootstrapModalModule,
     Ng2UIModule,
-    Ng2UtilsModule
+    Ng2UtilsModule,
+    Ng2AutoCompleteModule
 
   ],
   providers: [

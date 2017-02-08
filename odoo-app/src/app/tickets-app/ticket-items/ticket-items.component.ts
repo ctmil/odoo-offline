@@ -1,12 +1,17 @@
 import { Component, OnInit, Input, Output } from '@angular/core';
+
 import { TicketItem } from "../../ticket-item";
 import { TicketItems } from "../../ticket-items";
+import { Producto } from "../../producto";
+import { ConexionService } from '../../conexion.service';
+
 
 @Component({
   selector: 'ticket-items',
   templateUrl: './ticket-items.component.html',
   styleUrls: ['./ticket-items.component.css']
 })
+
 export class TicketItemsComponent implements OnInit {
 
   @Input() p_TicketItems: TicketItems;
@@ -15,7 +20,7 @@ export class TicketItemsComponent implements OnInit {
   editItem: TicketItem;
 
   private _id: number = 0;
-  constructor() {
+  constructor( private CxService: ConexionService) {
   }
 
   ngOnInit() {}
@@ -48,6 +53,17 @@ export class TicketItemsComponent implements OnInit {
           _items_total += Number(Item.product_qty) * Number(Item.product_unit_price);
       }
       return _items_total;
+  }
+
+  get myProducts() {
+    var productos = [];
+    var allobjects = this.CxService.getTableAsArray("product.product")
+    for( let idx in allobjects) {
+      var pro: any = allobjects[idx];
+      productos.push( pro["name"]+" ["+pro["default_code"]+"]");
+    }
+    //console.log("productos:",productos);
+    return productos;
   }
   removeTicketItem(removeItem: TicketItem) {
     console.log("removeTicketItem", removeItem);

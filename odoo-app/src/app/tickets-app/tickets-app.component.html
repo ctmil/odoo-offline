@@ -9,7 +9,7 @@
     <div  class="form-inline">
       <div class="form-group col-md-3">
         <label for="cliente">Cliente</label>
-          <input class="form-control" placeholder="Client" autofocus="" [(ngModel)]="newTicket.client" (keyup.enter)="addTicket()" name="cliente"/>
+          <input class="form-control" auto-complete [source]="myClients" placeholder="Client" autofocus="" [(ngModel)]="newTicket.client" (keyup.enter)="addTicket()" name="cliente"/>
       </div>
       <div class="form-group col-md-3">
         <label for="amount">Vendedor</label>

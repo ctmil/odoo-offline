@@ -443,7 +443,7 @@ saveProducto(producto: any) {
     return table_hash;
   }
 
-  getTableAsArray( table_id: string ) {
+  getTableAsArray( table_id: string ) : any {
     var table_array: Cliente[] = [];
 
     if (table_id in this.pdb) {

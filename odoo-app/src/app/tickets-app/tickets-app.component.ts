@@ -11,7 +11,8 @@ import { TicketItem } from '../ticket-item';
 import { TicketItems } from "../ticket-items";
 import { TicketsService } from '../tickets.service';
 import { ConexionService } from '../conexion.service';
-
+import { Cliente } from "../cliente";
+import { Producto } from "../producto";
 
 @Component({
   selector: "tickets-app",
@@ -76,6 +77,16 @@ export class TicketsAppComponent implements OnInit {
   get tickets() {
     //console.log("calling tickets!", this.ticketsService.getAllTickets());
     return this.ticketsService.getAllTickets();
+  }
+
+  get myClients() {
+    var clientes = [];
+    var allobjects = this.CxService.getTableAsArray("res.partner")
+    for( let idx in allobjects) {
+      var cli : Cliente = allobjects[idx];
+      clientes.push(cli.name+" "+cli.document_number);
+    }
+    return clientes;
   }
 
   ngOnInit() {
