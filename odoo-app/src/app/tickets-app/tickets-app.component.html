@@ -33,7 +33,7 @@
   </div>
 </div>
 
-<div class="row">
+<div *ngIf="this.action==''" class="row">
   <div class="col-md-1">
     &nbsp;
   </div>
@@ -48,16 +48,16 @@
         </div>
     </div>
     <div class="col-md-3">
-        &nbsp;<a *ngIf="this.action==''" routerLink="/tickets/new" routerLinkActive="active"  class="btn btn-primary pull-left h2">Nuevo Ticket</a>
+        &nbsp;<a routerLink="/tickets/new" routerLinkActive="active"  class="btn btn-primary pull-left h2">Nuevo Ticket</a>
 
     </div>
 </div>
 
-<div id="top" class="row">
+<div *ngIf="this.action==''" id="top" class="row">
 <hr />
 </div>
 
-<div id="list" class="row">
+<div *ngIf="this.action==''" id="list" class="row">
   <div class="table-responsive col-md-12">
     <table class="table table-striped" cellspacing="0" cellpadding="0">
       <thead>

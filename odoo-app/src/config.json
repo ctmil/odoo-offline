@@ -1,0 +1,38 @@
+{
+    "databases": {
+        "tickets":  {
+            "key_name": [ "id", "client" ],
+            "dbname": "tickets",
+            "dbsync": "tickets"
+        },
+        "res.partner": {
+            "key_name": [ "id", "name" ],
+            "dbname": "res.partner",
+            "dbsyncname": "res_partner"
+        },
+        "product.product": {
+            "key_name": [ "default_code", "name" ],
+            "dbname": "product.product",
+            "dbsyncname": "product_product"
+        }
+    },
+    "auth": {
+        "couchdb": {
+            "host": "http://localhost",
+            "port": "5984",
+            "username": "uuu",
+            "password": "ppp"
+        },
+        "syncoptions": {
+            "live": true,
+            "retry": true 
+        },
+        "odoo": {
+            "host": "http://localhost",
+            "port": "8069",
+            "db": "ddd",
+            "username": "uuu",
+            "password": "ppp"        
+        }
+    }
+}

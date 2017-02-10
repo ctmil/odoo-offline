@@ -29,7 +29,11 @@ import { BootstrapModalModule } from 'angular2-modal/plugins/bootstrap';
 import { Ng2UIModule }    from 'ng2-ui';
 import { Ng2UtilsModule } from 'ng2-utils';
 import { Ng2AutoCompleteModule } from 'ng2-auto-complete';
+import { ConfigModule, ConfigLoader, ConfigStaticLoader } from 'ng2-config';
 
+export function configFactory() {
+    return new ConfigStaticLoader('/config.json'); // PATH || API ENDPOINT
+}
 
 @NgModule({
   declarations: [
@@ -49,7 +53,11 @@ import { Ng2AutoCompleteModule } from 'ng2-auto-complete';
     LocalStorageModule.withConfig({
             prefix: 'odoo-app',
             storageType: 'localStorage'
-        }),
+    }),
+    ConfigModule.forRoot({
+      provide: ConfigLoader,
+      useFactory: (configFactory)
+    }),
     AppRoutingModule,
     LoginRoutingModule,
     BrowserModule,

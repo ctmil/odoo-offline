@@ -37,6 +37,7 @@
     "font-awesome": "^4.7.0",
     "jquery": "^3.1.1",
     "ng2-bootstrap": "^1.1.16-11",
+    "ng2-config": "^1.1.2-final",
     "ng2-pagination": "^2.0.0",
     "ng2-ui": "^0.12.3",
     "ng2-utils": "^0.6.1",

@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Http } from '@angular/http';
 import { LocalStorageService } from 'angular-2-local-storage';
 import { Subject }    from 'rxjs/Subject';
 import {  BehaviorSubject }    from 'rxjs/BehaviorSubject';
@@ -9,7 +10,7 @@ import { Tickets } from './tickets';
 import { Producto } from './producto';
 import { ProductosService } from './productos.service';
 import { ConexionData } from './conexion-data';
-
+import { ConfigService } from 'ng2-config';
 
 var odooxmlrpc = require('odoo-xmlrpc');
 var PouchDB = require('pouchdb');
@@ -50,13 +51,18 @@ export class ConexionService {
     password: ""
   });
 
+  CouchConnData: ConexionData;
+
   dbsyncoptions: any = { live: true, retry: true };
 
   Ox = new odooxmlrpc({});
 
-  constructor(private lSS: LocalStorageService) {
+  constructor( private lSS: LocalStorageService, private config : ConfigService ) {
 
-    console.log("ConexionService > constructor!");
+    console.log("ConexionService > constructor!",
+      this.config.getSettings(),
+      this.config.getSettings("auth", "couchdb"),
+      this.config.getSettings("auth", "syncoptions"));
 
     if (lSS.isSupported) {
       //console.log("OK! local storage is supported!");
@@ -64,72 +70,38 @@ export class ConexionService {
       //console.log("storageType: " + storageType);
     }
 
-    this.pdb['tickets'] = {
-      'key_name': [ "id", "client" ],
-      'db': new PouchDB("tickets"),
-      'dbsync': "http://localhost:5984/tickets",
-      'updated': new BehaviorSubject(false),
-      'cache_records': [],
-      'lastsync': '',
-      'len': 0,
-    };
-    this.pdb['tickets'].updated$ = this.pdb['tickets'].updated.asObservable();
-    //this.pdb['res.partner'].db.replicate.to('http://localhost:5984/res_partner');
-    this.pdb['tickets'].db.sync(  this.pdb['tickets']['dbsync'],
-                                            this.dbsyncoptions);
+    this.CouchConnData = new ConexionData( this.config.getSettings("auth", "couchdb"));
+    this.ConnData = new ConexionData( this.config.getSettings("auth", "odoo"));
+    console.log("ConexionService >  CouchConnData", this.CouchConnData);
+    this.dbsyncoptions = this.config.getSettings("auth", "syncoptions");
 
-    this.pdb['res.partner'] = {
-      'key_name': [ "id", "name" ],
-      'db': new PouchDB("res.partner"),
-      'dbsync': "http://localhost:5984/res_partner",
-      'updated': new BehaviorSubject(false),
-      'cache_records': [],
-      'lastsync': '',
-      'len': 0,
-    };
-    this.pdb['res.partner'].updated$ = this.pdb['res.partner'].updated.asObservable();
-    //this.pdb['res.partner'].db.replicate.to('http://localhost:5984/res_partner');
-    this.pdb['res.partner'].db.sync( this.pdb['res.partner']['dbsync'],this.dbsyncoptions);
-
-    this.pdb_clientes = this.pdb['res.partner'].db;
-    this.clientes = this.pdb['res.partner'].cache_records;
-
-    this.pdb['product.product'] = {
-      'key_name': [ "default_code", "name" ],
-      'db': new PouchDB("product.product"),
-      'dbsync': "http://localhost:5984/product_product",
-      'updated': new BehaviorSubject(false),
-      'cache_records': [],
-      'lastsync': '',
-      'len': 0,
-    };
-    this.pdb['product.product'].updated$ = this.pdb['product.product'].updated.asObservable();
-    //this.pdb['product.product'].db.replicate.to('http://localhost:5984/product_product');
-    this.pdb['product.product'].db.sync(this.pdb['product.product']['dbsync'],this.dbsyncoptions);
-
-
-    this.pdb_productos = this.pdb['product.product'].db;
-    this.productos = this.pdb['product.product'].cache_records;
+    this.pdb = this.config.getSettings("databases");
+    for (var dbindex in this.pdb) {
+      var ptab = this.pdb[dbindex];
+      ptab['db'] = new PouchDB(ptab['dbname']);
+      ptab['dbsync'] =  this.CouchConnData.host + ":"
+        + this.CouchConnData.port + "/"
+        + ptab['dbsyncname'];
+      ptab['updated'] = new BehaviorSubject(false);
+      ptab['cache_records'] = [];
+      ptab['lastsync'] = '';
+      ptab['len'] = 0;
+      ptab.updated$ = ptab.updated.asObservable();
+      ptab.db.sync(ptab.dbsync, this.dbsyncoptions);
+      this.getDocs(ptab['dbname'], (res) => {
+        console.log("Loaded db:", ptab['dbname']);
+      });
+    }
+    console.log("ConexionService > created db tables: ", this.pdb);
 
     this.fetchConexionData();
     this.Conectar(this.ConnData);
-
-    this.getDocs("tickets", (res) => {
-      this.getDocs("res.partner", (res) => {
-        this.getDocs("product.product", (res) => {
-
-        });
-      });
-    });
-
     console.log("ConexionService > constructor end!", this);
 
   }
 
   isConnected() {
-    /*
-    if (this.connectedOk) this.connectedOk.next(true);
-    else this.connectedOk.next(false);*/
+    return this.connectedOk.getValue();
   }
 
 submit(key, val) {
