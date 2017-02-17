@@ -1,3 +1,4 @@
+
 <div id="top" class="row">
   <div class="col-md-3">
       <h2>{{message}}</h2>
@@ -7,16 +8,16 @@
 <div *ngIf="this.action!=''">
   <div  class="row">
     <div  class="form-inline">
-      <div class="form-group col-md-3">
+      <div class="form-group col-md-4">
         <label for="cliente">Cliente</label>
-          <input class="form-control" auto-complete [source]="myClients" placeholder="Client" autofocus="" [(ngModel)]="newTicket.client" (keyup.enter)="addTicket()" name="cliente"/>
+        <input class="form-control" auto-complete [source]="myClients" placeholder="Client" autofocus="" [(ngModel)]="newTicket.client" (keyup.enter)="addTicket()" name="cliente"/>
       </div>
-      <div class="form-group col-md-3">
+      <div class="form-group col-md-4">
         <label for="amount">Vendedor</label>
         <input class="form-control" placeholder="Vendedor"  autofocus="" [(ngModel)]="newTicket.seller" (keyup.enter)="addTicket()" name="seller"/>
       </div>
-      <div class="form-group col-md-3">
-        <label for="fecha">Fecha</label>
+      <div class="form-group col-md-4">
+        <!-- label for="fecha">Fecha</label -->
         <input class="form-control" placeholder="DD/MM/YYYY" autofocus="" ng2-datetime-picker [(ngModel)]="newTicket.date" (keyup.enter)="addTicket()" name="fecha"/>
       </div>
     </div>
