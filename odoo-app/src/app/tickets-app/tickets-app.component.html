@@ -1,6 +1,6 @@
 
 <div id="top" class="row">
-  <div class="col-md-3">
+  <div class="col-md-6">
       <h2>{{message}}</h2>
   </div>
 </div> <!-- /#top -->
@@ -18,7 +18,7 @@
       </div>
       <div class="form-group col-md-4">
         <!-- label for="fecha">Fecha</label -->
-        <input class="form-control" placeholder="DD/MM/YYYY" autofocus="" ng2-datetime-picker [(ngModel)]="newTicket.date" (keyup.enter)="addTicket()" name="fecha"/>
+        <input class="form-control" placeholder="DD/MM/YYYY" autofocus="" ng2-datetime-picker [(ngModel)]="newTicket.date" (keyup.enter)="addTicket()" name="fecha" required/>
       </div>
     </div>
   </div>
@@ -27,7 +27,7 @@
         <ticket-items [p_TicketItems]="newTicket.items" (notify)='onNotify($event)'></ticket-items>
     </div>
   </div>
-  <div class="row">
+  <div class="row" *ngIf="newTicket.items.length > 0">
     <div class="col-md-12"><a routerLink="/" routerLinkActive="active" class="btn btn-primary h3 pull-left">Cancelar</a><button *ngIf="this.action!='delete'" (click)="addTicket()" class="btn btn-primary h3 pull-right">Confirmar</button>
     <button *ngIf="this.action=='delete'" (click)="removeTicket(newTicket)" class="btn btn-warning h3 pull-right">Borrar</button>
     </div>
@@ -58,7 +58,9 @@
 <hr />
 </div>
 
+
 <div *ngIf="this.action==''" id="list" class="row">
+  <hr />
   <div class="table-responsive col-md-12">
     <table class="table table-striped" cellspacing="0" cellpadding="0">
       <thead>
