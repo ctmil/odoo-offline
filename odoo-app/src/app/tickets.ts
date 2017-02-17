@@ -26,5 +26,27 @@ export class Tickets {
       return _items_total;
     }
 
+    isValid(): boolean {
+      if (this.date == null) {
+        return false;
+      }
+      console.log('isValid');
+      console.log(this.date);
+      // Validates date is greater than yesterday
+      var yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      console.log(yesterday);
+      if (this.date <= yesterday) {
+        return false;
+      }
+      if (this.client == null) {
+        return false;
+      }
+      if (this.items == null || this.items.length == 0) {
+        return false;
+      }
+      return true;
+    }
+
 
 }

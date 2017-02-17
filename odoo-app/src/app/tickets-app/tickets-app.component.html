@@ -30,7 +30,7 @@
         <ticket-items [p_TicketItems]="newTicket.items" (notify)='onNotify($event)'></ticket-items>
     </div>
   </div>
-  <div class="row" *ngIf="newTicket.items.length > 0">
+  <div class="row" *ngIf="newTicket.isValid()">
     <div class="col-md-9">
       </div>
     <div class="col-md-3"><a routerLink="/" routerLinkActive="active" class="btn btn-warning pull-left">Cancelar</a>
