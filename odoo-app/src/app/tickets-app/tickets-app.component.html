@@ -10,15 +10,18 @@
     <div  class="form-inline">
       <div class="form-group col-md-4">
         <label for="cliente">Cliente</label>
-        <input class="form-control" auto-complete [source]="myClients" placeholder="Client" autofocus="" [(ngModel)]="newTicket.client" (keyup.enter)="addTicket()" name="cliente"/>
+        <input class="form-control" auto-complete [source]="myClients" placeholder="Client"
+                autofocus="" [(ngModel)]="newTicket.client" (keyup.enter)="addTicket()" name="cliente"/>
       </div>
       <div class="form-group col-md-4">
         <label for="amount">Vendedor</label>
-        <input class="form-control" placeholder="Vendedor"  autofocus="" [(ngModel)]="newTicket.seller" (keyup.enter)="addTicket()" name="seller"/>
+        <input class="form-control" placeholder="Vendedor"
+                autofocus="" [(ngModel)]="newTicket.seller" (keyup.enter)="addTicket()" name="seller"/>
       </div>
       <div class="form-group col-md-4">
         <!-- label for="fecha">Fecha</label -->
-        <input class="form-control" placeholder="DD/MM/YYYY" autofocus="" ng2-datetime-picker [(ngModel)]="newTicket.date" (keyup.enter)="addTicket()" name="fecha" required/>
+        <input class="form-control" placeholder="DD/MM/YYYY" autofocus=""
+                ng2-datetime-picker [(ngModel)]="newTicket.date" (keyup.enter)="addTicket()" name="fecha" required/>
       </div>
     </div>
   </div>
@@ -28,8 +31,13 @@
     </div>
   </div>
   <div class="row" *ngIf="newTicket.items.length > 0">
-    <div class="col-md-12"><a routerLink="/" routerLinkActive="active" class="btn btn-primary h3 pull-left">Cancelar</a><button *ngIf="this.action!='delete'" (click)="addTicket()" class="btn btn-primary h3 pull-right">Confirmar</button>
-    <button *ngIf="this.action=='delete'" (click)="removeTicket(newTicket)" class="btn btn-warning h3 pull-right">Borrar</button>
+    <div class="col-md-9">
+      </div>
+    <div class="col-md-3"><a routerLink="/" routerLinkActive="active" class="btn btn-warning pull-left">Cancelar</a>
+      <button *ngIf="this.action!='delete'" (click)="addTicket()"
+            class="btn btn-primary pull-right">Confirmar</button>
+      <button *ngIf="this.action=='delete'" (click)="removeTicket(newTicket)"
+            class="btn btn-warning pull-right">Borrar</button>
     </div>
   </div>
 </div>
