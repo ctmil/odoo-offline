@@ -1,3 +1,4 @@
+import {Http} from '@angular/http';
 import { NgModule, ChangeDetectorRef, ViewContainerRef } from "@angular/core";
 import { Overlay } from 'angular2-modal';
 import { Modal } from 'angular2-modal/plugins/bootstrap';
@@ -11,6 +12,10 @@ import { DialogService } from './dialog.service';
 import { ConexionService } from './conexion.service';
 import { ConexionData } from './conexion-data';
 import { ConexionComponent } from './conexion/conexion.component';
+
+// Import RxJs required methods
+import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/catch';
 
 @Component({
   selector: "odoo-app",
@@ -37,13 +42,46 @@ export class AppComponent implements OnInit, OnDestroy {
   cx_product_product_sub: Subscription;
   cx_res_partner_sub: Subscription;
 
-  constructor(  private CxService : ConexionService,
-                private cd: ChangeDetectorRef,
-                overlay: Overlay,
-                vcRef: ViewContainerRef,
-                public modal: Modal ) {
+  // data_json
+  data_json;
+
+  //private extractData(res: Response) {
+  //  let body = res.json();
+  //  console.log('JSON Data');
+  //  console.log(body);
+  //  return body.data || { };
+  //}
+
+  //private handleError (error: Response | any) {
+    // In a real world app, we might use a remote logging infrastructure
+  //  let errMsg: string;
+  //  if (error instanceof Response) {
+  //    const body = error.json() || '';
+  //    const err = body.error || JSON.stringify(body);
+  //    errMsg = `${error.status} - ${error.statusText || ''} ${err}`;
+  //  } else {
+  //    errMsg = error.message ? error.message : error.toString();
+  //  }
+  //  console.error(errMsg);
+  //  return Observable.throw(errMsg);
+  //}
+
+
+  constructor(private CxService: ConexionService,
+    private cd: ChangeDetectorRef,
+    overlay: Overlay,
+    vcRef: ViewContainerRef,
+    public modal: Modal,
+    private http: Http) {
     //Dlg.alert("YEAH");
+
     overlay.defaultViewContainer = vcRef;
+    console.log('reading json config file');
+
+    this.http.get('odoo-offline.json')
+      .map(function() { console.log('Success'); });
+      //.catch(function() {console.log('Error reading json');});
+
     /*this.modal.confirm()
         .size('lg')
         .showClose(true)
@@ -136,6 +174,8 @@ export class AppComponent implements OnInit, OnDestroy {
       // subscribing to a observable returns a subscription object
       this.sub = this.timer.subscribe(t => this.tickerFunc(t));
 
+
+
   }
 
   toggleAutoSinc() {
@@ -170,9 +210,9 @@ export class AppComponent implements OnInit, OnDestroy {
 
   tickerFunc( tick : any ) {
     this.ticks = tick;
-    if (this.autoSinc) {
-      this.CxService.Conectar(this.CxService.ConnData);
-    }
+    //if (this.autoSinc) {
+    //  this.CxService.Conectar(this.CxService.ConnData);
+    //}
       //console.log("AppComponent > this.CxService:", this.CxService);
   } // tickerFunc
 

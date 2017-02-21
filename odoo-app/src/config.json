@@ -19,6 +19,9 @@
             "adapter": "websql"
         }
     },
+    "point_of_sale": {
+	"number": "0098"
+	},
     "auth": {
         "couchdb": {
             "host": "http://localhost",

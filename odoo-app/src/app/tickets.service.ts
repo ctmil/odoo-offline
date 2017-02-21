@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Tickets } from './tickets';
 import { TicketItem } from './ticket-item';
 import { TicketItems } from "./ticket-items";
+import { ConfigService } from 'ng2-config';
 
 import { ConexionService } from './conexion.service';
 
@@ -16,8 +17,9 @@ export class TicketsService {
   // Placeholder for todo's
   tickets: Tickets[] = [];
 
-  constructor( private CxService : ConexionService ) {
-    //this.fetchTickets();
+  constructor(private CxService: ConexionService,
+              public config: ConfigService) {
+    this.fetchTickets();
   }
 
   fetchTickets(callback?:any) {
@@ -33,9 +35,14 @@ export class TicketsService {
 
   // Simulate POST /todos
   addTicket(ticket: Tickets, callback?: any): TicketsService {
-    if (!ticket.id) {
-      ticket.id = ++this.lastId;
-    }
+    var point_of_sale = this.config.getSettings("point_of_sale", "number");
+    var today = new Date();
+    var new_id = point_of_sale + today.toISOString();
+
+    ticket.id = new_id;
+    //if (!ticket.id) {
+    //  ticket.id = ++this.lastId;
+    //}
     this.tickets.push(ticket);
 
     if (String(ticket.client).trim() == '') {
@@ -80,7 +87,7 @@ export class TicketsService {
     this.deleteTicketById(ticket["_id"], callback);
   }
   // Simulate PUT /todos/:id
-  updateTicketById(id: number, values: Object = {}): Tickets {
+  updateTicketById(id: string, values: Object = {}): Tickets {
     let ticket = this.getTicketById(id);
     if (!ticket) {
       return null;
@@ -96,7 +103,7 @@ export class TicketsService {
   }
 
   // Simulate GET /todos/:id
-  getTicketById(id: number): Tickets {
+  getTicketById(id: string): Tickets {
     return this.tickets
       .filter(ticket => ticket.id === id)
       .pop();
