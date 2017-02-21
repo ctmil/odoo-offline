@@ -17,15 +17,15 @@ export class TicketsService {
   tickets: Tickets[] = [];
 
   constructor( private CxService : ConexionService ) {
-    this.fetchTickets();
+    //this.fetchTickets();
   }
 
   fetchTickets(callback?:any) {
-
-    this.CxService.getDocs(this.table_id, (res) => {
+/*
+    this.CxService.getDocs(this.table_id, {include_docs:false}, (table_id,res) => {
       console.log("TicketsService > ", this.CxService.pdb[this.table_id]);
       if (callback) callback(res);
-    });
+    });*/
 
   }
 

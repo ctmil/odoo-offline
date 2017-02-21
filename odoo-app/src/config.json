@@ -3,17 +3,20 @@
         "tickets":  {
             "key_name": [ "id", "client" ],
             "dbname": "tickets",
-            "dbsync": "tickets"
+            "dbsyncname": "tickets",
+            "adapter": "websql"
         },
         "res.partner": {
             "key_name": [ "id", "name" ],
             "dbname": "res.partner",
-            "dbsyncname": "res_partner"
+            "dbsyncname": "res_partner",
+            "adapter": "websql"
         },
         "product.product": {
             "key_name": [ "default_code", "name" ],
             "dbname": "product.product",
-            "dbsyncname": "product_product"
+            "dbsyncname": "product_product",
+            "adapter": "websql"
         }
     },
     "auth": {
@@ -25,14 +28,14 @@
         },
         "syncoptions": {
             "live": true,
-            "retry": true 
+            "retry": true
         },
         "odoo": {
             "host": "http://localhost",
             "port": "8069",
             "db": "ddd",
             "username": "uuu",
-            "password": "ppp"        
+            "password": "ppp"
         }
     }
 }

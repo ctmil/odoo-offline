@@ -9,15 +9,15 @@
     <div  class="form-inline">
       <div class="form-group col-md-3">
         <label for="cliente">Cliente</label>
-          <input class="form-control" auto-complete [source]="myClients" placeholder="Client" autofocus="" [(ngModel)]="newTicket.client" (keyup.enter)="addTicket()" name="cliente"/>
+          <input class="form-control" ng2-auto-complete [source]="myClients.bind(this)"  placeholder="Client" autofocus="" [(ngModel)]="newTicket.client" [max-num-list]="5" [min-chars]="3" name="cliente"/>
       </div>
       <div class="form-group col-md-3">
         <label for="amount">Vendedor</label>
-        <input class="form-control" placeholder="Vendedor"  autofocus="" [(ngModel)]="newTicket.seller" (keyup.enter)="addTicket()" name="seller"/>
+        <input class="form-control" placeholder="Vendedor"  autofocus="" [(ngModel)]="newTicket.seller" name="seller"/>
       </div>
       <div class="form-group col-md-3">
         <label for="fecha">Fecha</label>
-        <input class="form-control" placeholder="DD/MM/YYYY" autofocus="" ng2-datetime-picker [(ngModel)]="newTicket.date" (keyup.enter)="addTicket()" name="fecha"/>
+        <input class="form-control" placeholder="DD/MM/YYYY" autofocus="" ng2-datetime-picker [(ngModel)]="newTicket.date" name="fecha"/>
       </div>
     </div>
   </div>
@@ -74,18 +74,18 @@
       </thead>
       <tbody *ngIf="tickets.length > 0">
         <tr *ngFor="let ticket of tickets">
-          <td>{{ticket.id}}</td>
-          <td>{{ticket.client}}</td>
-          <td>{{ticket.vendedor}}</td>
-          <td>{{ticket.items.length}}</td>
-          <td>{{ticket.amount}} $</td>
-          <td>{{ticket.date | date:'fullDate' }}</td>
-          <td class="actions">
+          <td *ngIf="ticket">{{ticket.id}}</td>
+          <td *ngIf="ticket">{{ticket.client}}</td>
+          <td *ngIf="ticket">{{ticket.vendedor}}</td>
+          <td *ngIf="ticket">{{ticket.items.length}}</td>
+          <td *ngIf="ticket">{{ticket.amount}} $</td>
+          <td *ngIf="ticket">{{ticket.date | date:'fullDate' }}</td>
+          <td  *ngIf="ticket" class="actions">
               <a class="btn btn-success btn-xs" [routerLink]="['/tickets/edit', ticket._id]" >Ver</a>
               <a class="btn btn-warning btn-xs" [routerLink]="['/tickets/edit', ticket._id]" >Editar</a>
               <a class="btn btn-warning btn-xs" [routerLink]="['/tickets/delete', ticket._id]" >Borrar</a>
           </td>
-          <td>Sincronizado <span align="right"><i class="fa fa-rss" aria-hidden="true"></i></span></td>
+          <td  *ngIf="ticket">Sincronizado <span align="right"><i class="fa fa-rss" aria-hidden="true"></i></span></td>
       </tr>
       </tbody>
     </table>

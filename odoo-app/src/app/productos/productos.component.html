@@ -30,16 +30,16 @@
 		                 </tr>
 		            </thead>
 		            <tbody *ngIf="productos.length > 0">
-                		<tr *ngFor="let producto of productos | paginate: { itemsPerPage: 10, currentPage: p }">
-		                    <td>{{producto.default_code}}</td>
-                		    <td>{{producto.name}}</td>
-		                    <td class="col-number">{{producto.lst_price | currency:'USD':true}} </td>
-                		    <td>{{producto.qty_available}}</td>
-		                    <td class="actions">
+                		<tr *ngFor="let producto of productos | paginate: { itemsPerPage: ipp, currentPage: p }">
+		                    <td *ngIf="producto">{{producto.default_code}}</td>
+                		    <td *ngIf="producto">{{producto.name}}</td>
+		                    <td *ngIf="producto" class="col-number">{{producto.lst_price | currency:'USD':true}} </td>
+                		    <td *ngIf="producto">{{producto.qty_available}}</td>
+		                    <td *ngIf="producto"class="actions">
                 		        <a class="btn btn-success btn-xs" href="view.html">Ver</a>
 		                        <a class="btn btn-warning btn-xs" href="edit.html">Editar</a>
 		                    </td>
-				                <td>Sincronizado <span align="right"><i class="fa fa-rss" aria-hidden="true"></i></span></td>
+				                <td *ngIf="producto">Sincronizado <span align="right"><i class="fa fa-rss" aria-hidden="true"></i></span></td>
 		                </tr>
 		            </tbody>
 		         </table>
@@ -49,7 +49,7 @@
 	     <div id="bottom" class="row">
 
         <div *ngIf="productos.length > 0" class="col-md-12">
-                <pagination-controls (pageChange)="p = $event"></pagination-controls>
+                <pagination-controls (pageChange)="pageChanged($event)"></pagination-controls>
 		    </div>
 
 	     </div> <!-- /#bottom -->

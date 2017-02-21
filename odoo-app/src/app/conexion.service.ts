@@ -78,18 +78,28 @@ export class ConexionService {
     this.pdb = this.config.getSettings("databases");
     for (var dbindex in this.pdb) {
       var ptab = this.pdb[dbindex];
-      ptab['db'] = new PouchDB(ptab['dbname']);
+      var ptableid = ptab['dbname'];
+      if (ptab['adapter']) ptab['db'] = new PouchDB(ptableid, { "adapter": ptab['adapter'] });
+      else ptab['db'] = new PouchDB(ptableid);
       ptab['dbsync'] =  this.CouchConnData.host + ":"
         + this.CouchConnData.port + "/"
         + ptab['dbsyncname'];
-      ptab['updated'] = new BehaviorSubject(false);
+      ptab['updated'] = new BehaviorSubject("");
       ptab['cache_records'] = [];
       ptab['lastsync'] = '';
-      ptab['len'] = 0;
+      ptab['filtersearch'] = '';
+      ptab['count'] = 0;
       ptab.updated$ = ptab.updated.asObservable();
       ptab.db.sync(ptab.dbsync, this.dbsyncoptions);
-      this.getDocs(ptab['dbname'], (res) => {
-        console.log("Loaded db:", ptab['dbname']);
+      /**/
+      this.getInfo( ptableid, (table_id,res) => {
+        var p = this.pdb[table_id];
+        p['cache_records'] = new Array(p['count']);
+        console.log("Info fecthed for " + table_id, res, p);
+        this.getDocs( p['dbname'], {include_docs: false},(table_id, res) => {
+          console.log("Loaded db:", table_id);
+          this.pdb[table_id].updated.next("Fetched info and records ids about "+table_id);
+        });
       });
     }
     console.log("ConexionService > created db tables: ", this.pdb);
@@ -97,7 +107,17 @@ export class ConexionService {
     this.fetchConexionData();
     this.Conectar(this.ConnData);
     console.log("ConexionService > constructor end!", this);
+    window["Cx"] = this;
+  }
 
+  getInfo(table_id: string, callback?:any) {
+    this.pdb[table_id]['db'].info().then((result) => {
+      // handle result
+      this.pdb[table_id]['count'] = result.doc_count;
+      if (callback) callback(table_id,result);
+    }).catch((err)=> {
+      console.log(err);
+    });
   }
 
   isConnected() {
@@ -153,8 +173,8 @@ submit(key, val) {
 
         console.log("saveDoc > Finalized!!!", response, key_id_name );
 
-        this.getDocs(table_id, (result) => {
-          this.pdb[table_id].updated.next(true);
+        this.getDocs(table_id, {include_docs: false}, (result) => {
+          this.pdb[table_id].updated.next("getting docs after saved");
           this.databaseUpdated.next(true);
         });
 
@@ -181,7 +201,7 @@ submit(key, val) {
   }
 
   getClientes(callback) {
-    return this.getDocs('res.partner', callback );
+    return this.getDocs('res.partner', {include_docs: false},callback );
   }
 
   removeDoc(table_id: string, record_id: string, callback?: any) {
@@ -223,12 +243,14 @@ submit(key, val) {
   }
 
 
-  getDocs( table_id, callback ) {
-    console.log(`CxService::getDocs(${table_id})`);
-    var docs = this.pdb[table_id]['db'].allDocs({include_docs: true}).then((result) => {
+  getDocs( table_id, options, callback ) {
+    console.log(`CxService::getDocs(${table_id}) options: ${JSON.stringify(options)}`);
 
-      this.pdb[table_id]['cache_records'] = [];
-      //console.log("getDocs > allDocs > result:", result);
+    var docs = this.pdb[table_id]['db'].allDocs(options).then((result) => {
+      console.log("getDocs>", table_id, result);
+      if (result.rows && options["include_docs"]==false)
+        this.pdb[table_id]['cache_records'] = result.rows;
+      /*
       for (var row in result.rows) {
         var R: any = result.rows[row]['doc'];
         if (table_id == "tickets") {
@@ -236,12 +258,9 @@ submit(key, val) {
           this.pdb[table_id]['cache_records'].push( T );
         } else
           this.pdb[table_id]['cache_records'].push( R );
-        //console.log("CxService::getDocs row:", row, result.rows[row]);
       }
-      //let pdb_cache = this.pdb[table_id]['cache_records'];
-      //console.log(`CxService::getDocs(${table_id}) > cache records: ${pdb_cache.length}`, pdb_cache);
-      //console.log("CxService::getClientes result:", result, " clientes:", self.clientes);
-      if (callback) callback(result);
+      */
+      if (callback) callback(table_id,result);
 
     }).catch(function(err) {
 

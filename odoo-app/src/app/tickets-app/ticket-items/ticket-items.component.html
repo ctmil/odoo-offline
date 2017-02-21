@@ -14,7 +14,7 @@
       <tbody *ngIf="p_TicketItems.length >= 0">
         <tr>
           <td><input type="hidden" placeholder="ID" [(ngModel)]="newItem.id"></td>
-          <td><input type="text" auto-complete [source]="myProducts" placeholder="Nombre Producto" [(ngModel)]="newItem.product_name"><input type="text" placeholder="Producto Id" [(ngModel)]="newItem.product_id"></td>
+          <td><input type="text" ng2-auto-complete [source]="myProducts.bind(this)" placeholder="Nombre Producto" [(ngModel)]="newItem.product_name" [max-num-list]="5" [min-chars]="3"><input type="text" placeholder="Producto Id" [(ngModel)]="newItem.product_id"></td>
           <td><input type="text" placeholder="Cantidad" [(ngModel)]="newItem.product_qty"></td>
           <td><input type="text" placeholder="PrecioxU" [(ngModel)]="newItem.product_unit_price"></td>
           <td></td>

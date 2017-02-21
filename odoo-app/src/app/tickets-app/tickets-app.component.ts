@@ -4,7 +4,11 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import 'rxjs/add/operator/switchMap';
 import { Subscription }   from 'rxjs/Subscription';
-
+import { Observable, Subscribable } from 'rxjs/Observable';
+import { Subscriber } from "rxjs/Subscriber";
+import { Observer } from "rxjs/Observer";
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import 'rxjs/add/operator/map';
 
 import { Tickets } from '../tickets';
 import { TicketItem } from '../ticket-item';
@@ -28,6 +32,8 @@ export class TicketsAppComponent implements OnInit {
   newTicket: Tickets = new Tickets();
   action: string = "";
   subparam: Subscription;
+  search_clientes: BehaviorSubject<Object[]>;
+  data: any = [];
 
   constructor(
     private ticketsService: TicketsService,
@@ -76,17 +82,69 @@ export class TicketsAppComponent implements OnInit {
 
   get tickets() {
     //console.log("calling tickets!", this.ticketsService.getAllTickets());
-    return this.ticketsService.getAllTickets();
+    //return this.ticketsService.getAllTickets();
+    return this.CxService.getTableAsArray('tickets')
   }
 
-  get myClients() {
-    var clientes = [];
-    var allobjects = this.CxService.getTableAsArray("res.partner")
+  misClientes(search : string) {
+    console.log("misClientes search:", search);
+
+    if (search.length > 2) {
+      /*this.CxService.getDocs("res.partner",
+        { include_docs: true, key: search }, (table_id, result) => {
+        console.log("Result from search: ", search, result);
+      });*/
+      //var myId = 'foo';
+
+    }
+  }
+
+  myClients(search_keyword) {
+    //var clientes = ["Juan","Pedro","Miguel","Lucia","Lucia Sola"];
+    /*var allobjects = this.CxService.getTableAsArray("res.partner")
     for( let idx in allobjects) {
       var cli : Cliente = allobjects[idx];
       clientes.push(cli.name+" "+cli.document_number);
-    }
-    return clientes;
+    }*/
+    //console.log("get myClients", this.search_clientes);
+    //return this.search_clientes;
+    console.log("searching clients!", search_keyword, this);
+
+    return Observable.create((subscriber: Subscriber<{}> )=> {
+
+      console.log("subscriber", subscriber, this);
+
+      this.CxService.pdb["res.partner"]["db"].query((doc, emit) => {
+        if (doc._id.indexOf(search_keyword) >= 0) {
+          emit(doc);
+        }
+      }).then((result) => {
+        // handle result
+        console.log("result:", result, this);
+        this["data"] = [];
+        let docs = result.rows.map((row) => {
+          this.data.push(row.id);
+          //observer.onNext(this["data"]);
+        });
+        console.log("Data:",this.data);
+        subscriber.next( this.data );
+            /*this.search_clientes = [];
+        if (result.rows) {
+          for (var i in result.rows) {
+            this.search_clientes.push(result.rows[i].id);
+          }
+        }
+        console.log("this.search_clientes:", this.search_clientes);*/
+        return result.rows;
+        //this.cd.markForCheck();
+        //this.cd.detectChanges();
+      }).catch(function(err) {
+        console.log(err);
+      });
+      //observer.onCompleted();
+      return () => console.log("disposed");
+    });
+
   }
 
   ngOnInit() {

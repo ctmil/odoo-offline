@@ -21,8 +21,11 @@ export class ProductosComponent implements OnInit, OnDestroy {
   table_id: string = "product.product";
   table_filters: any = [];
   table_fields: any = ['name','default_code','lst_price','qty_available'];
+  ipp: number = 5;
+  p: number = 2;
 
-  constructor( private CxService: ConexionService, private cd: ChangeDetectorRef ) {
+  constructor(private CxService: ConexionService, private cd: ChangeDetectorRef) {
+    /*
     this.CxService.getDocs( this.table_id, (res) => {
       if (this.CxService.pdb[this.table_id]["cache_records"].length==0) {
         this.CxService.fetchOdooTable(this.table_id,
@@ -36,7 +39,36 @@ export class ProductosComponent implements OnInit, OnDestroy {
       }
 
       this.CxService.pdb[this.table_id].updated.next(true);
-    } );
+    } );*/
+  }
+
+  pageChanged(event) {
+    console.log("pageChanged " + this.table_id," from:",this["p"], " to:", event);
+    var pi = Number(event);
+    var mykeys = [];
+    var mytable = this.CxService.pdb[this.table_id]['cache_records'];
+    if (mytable) {
+      for (var i = (pi - 1) * this.ipp; i < pi * this.ipp; i++) {
+        if (mytable[i])
+          if (mytable[i].key)
+            mykeys.push(mytable[i].key);
+      }
+
+      this.CxService.getDocs(this.table_id, { include_docs: true, keys: mykeys },
+        (table_id, result) => {
+          console.log("bring page " + pi, result);
+          for (var i = 0; i < this.ipp; i++) {
+            var it = (pi - 1) * this.ipp + i;
+            if (mytable[it]) {
+              mytable[it] = new Producto(result.rows[i].doc);
+              mytable[it].id = result.rows[i].id;
+              mytable[it].key = result.rows[i].key;
+            }
+          }
+          //console.log("bring page mytable now is:", mytable);
+          this["p"] = pi;
+        });
+    }
   }
 
   get productos() {
@@ -44,13 +76,12 @@ export class ProductosComponent implements OnInit, OnDestroy {
         'test1': { name: 'test1 ' },
         'test2': { name: 'test2' }
       };*/
-    var table_records = this.CxService.getTableAsArray(this.table_id);
-    return table_records;
-    //console.log("calling get productos >", product_product);
-    //return product_product;
-    //return this.CxService.productos;
-    //return this.CxService.pdb[this.table_id]['cache_records'];
-}
+    //var res_partner = this.CxService.getTableAsArray("res.partner");
+    //var res_partner = this.Con.getClientes();
+    //console.log("calling get clientes >", this.CxService.pdb['res.partner']);
+    //return res_partner;
+    return this.CxService.pdb[this.table_id]['cache_records'];
+  }
 
   ngOnInit() {
 
