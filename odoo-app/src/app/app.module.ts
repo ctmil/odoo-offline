@@ -26,8 +26,8 @@ import { DropdownModule } from "ngx-dropdown";
 import { CollapseDirective } from 'ng2-bootstrap'
 import { ModalModule } from 'angular2-modal';
 import { BootstrapModalModule } from 'angular2-modal/plugins/bootstrap';
-import { Ng2UIModule }    from 'ng2-ui';
-import { Ng2UtilsModule } from 'ng2-utils';
+//import { Ng2UIModule }    from 'ng2-ui';
+//import { Ng2UtilsModule } from 'ng2-utils';
 import { Ng2AutoCompleteModule } from 'ng2-auto-complete';
 import { ConfigModule, ConfigLoader, ConfigStaticLoader } from 'ng2-config';
 
@@ -67,8 +67,8 @@ export function configFactory() {
     DropdownModule,
     ModalModule.forRoot(),
     BootstrapModalModule,
-    Ng2UIModule,
-    Ng2UtilsModule,
+    //Ng2UIModule,
+    //Ng2UtilsModule,
     Ng2AutoCompleteModule
 
   ],
