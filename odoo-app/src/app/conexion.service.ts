@@ -76,7 +76,9 @@ export class ConexionService {
     this.dbsyncoptions = this.config.getSettings("auth", "syncoptions");
 
     this.pdb = this.config.getSettings("databases");
+
     for (var dbindex in this.pdb) {
+
       var ptab = this.pdb[dbindex];
       var ptableid = ptab['dbname'];
       if (ptab['adapter']) ptab['db'] = new PouchDB(ptableid, { "adapter": ptab['adapter'] });
@@ -91,6 +93,26 @@ export class ConexionService {
       ptab['count'] = 0;
       ptab.updated$ = ptab.updated.asObservable();
       ptab.db.sync(ptab.dbsync, this.dbsyncoptions);
+
+      if (ptab["indexes"]) {
+        for (var idx in ptab["indexes"]) {
+          console.log("Adding index:", idx, ptab["indexes"][idx]);
+          var field_name = ptab['indexes'][idx]["field"];
+          ptab['indexes'][idx] = {
+            _id: '_design/' + idx,
+            views: {}
+          }
+          ptab['indexes'][idx].views[idx] = {
+            map: "function(doc) { emit(doc."+field_name+"); }"
+          }
+          ptab['db'].put(ptab['indexes'][idx]).then((result) => {
+            console.log("Added index " + idx,result);
+            return ptab['db'].query( idx, {stale: 'update_after'});
+          }).catch((error) => {
+            console.log("index already exist?", error);
+          })
+        }
+      }
       /**/
       this.getInfo( ptableid, (table_id,res) => {
         var p = this.pdb[table_id];
@@ -102,6 +124,7 @@ export class ConexionService {
         });
       });
     }
+
     console.log("ConexionService > created db tables: ", this.pdb);
 
     this.fetchConexionData();

@@ -114,16 +114,12 @@ export class TicketsAppComponent implements OnInit {
 
       console.log("subscriber", subscriber, this);
 
-      this.CxService.pdb["res.partner"]["db"].query((doc, emit) => {
-        if (doc._id.indexOf(search_keyword) >= 0) {
-          emit(doc);
-        }
-      }).then((result) => {
+      this.CxService.pdb["res.partner"]["db"].query("idx_document_number", { startkey: search_keyword, limit: 5, include_docs: true }).then((result) => {
         // handle result
         console.log("result:", result, this);
         this["data"] = [];
         let docs = result.rows.map((row) => {
-          this.data.push(row.id);
+          this.data.push(`(${row.id}) ${row.doc.document_number} - ${row.doc.name} - ${row.doc.email}`);
           //observer.onNext(this["data"]);
         });
         console.log("Data:",this.data);

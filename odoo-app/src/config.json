@@ -10,18 +10,28 @@
             "key_name": [ "id", "name" ],
             "dbname": "res.partner",
             "dbsyncname": "res_partner",
-            "adapter": "websql"
+            "adapter": "websql",
+            "indexes": {
+              "idx_document_number": {
+                "field": "document_number"
+              }
+            }
         },
         "product.product": {
             "key_name": [ "default_code", "name" ],
             "dbname": "product.product",
             "dbsyncname": "product_product",
-            "adapter": "websql"
+            "adapter": "websql",
+            "indexes": {
+              "idx_default_code": {
+                "field": "default_code"
+              }
+            }
         }
     },
     "point_of_sale": {
-	"number": "0098"
-	},
+      "number": "0098"
+    },
     "auth": {
         "couchdb": {
             "host": "http://localhost",
