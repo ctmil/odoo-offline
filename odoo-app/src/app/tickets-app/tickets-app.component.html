@@ -10,7 +10,8 @@
     <div  class="form-inline">
       <div class="form-group col-md-4">
         <label for="cliente">Cliente</label>
-          <input class="form-control" ng2-auto-complete [source]="myClients.bind(this)"  placeholder="Client" autofocus="" [(ngModel)]="newTicket.client" [max-num-list]="5" [min-chars]="3" name="cliente"/>
+          <input class="form-control" ng2-auto-complete [source]="myClients.bind(this)"  placeholder="Cliente DNI" autofocus="" [(ngModel)]="newTicket.cliente_dni" [max-num-list]="5" [min-chars]="3" name="cliente_dni" (valueChanged)="valueChanged($event)" loading-text="Buscando por DNI..." display-property-name="key"  [list-formatter]="myListFormatter"/>
+           <input placeholder="Cliente" class="form-control" [(ngModel)]="newTicket.client" name="cliente"/>
       </div>
       <div class="form-group col-md-4">
         <label for="amount">Vendedor</label>

@@ -30,6 +30,7 @@ import { BootstrapModalModule } from 'angular2-modal/plugins/bootstrap';
 //import { Ng2UtilsModule } from 'ng2-utils';
 import { Ng2AutoCompleteModule } from 'ng2-auto-complete';
 import { ConfigModule, ConfigLoader, ConfigStaticLoader } from 'ng2-config';
+import { Ng2DatetimePickerModule } from 'ng2-datetime-picker';
 
 export function configFactory() {
     return new ConfigStaticLoader('/config.json'); // PATH || API ENDPOINT
@@ -69,7 +70,8 @@ export function configFactory() {
     BootstrapModalModule,
     //Ng2UIModule,
     //Ng2UtilsModule,
-    Ng2AutoCompleteModule
+    Ng2AutoCompleteModule,
+    Ng2DatetimePickerModule
 
   ],
   providers: [

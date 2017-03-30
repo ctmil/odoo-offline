@@ -92,7 +92,34 @@ export class ConexionService {
       ptab['filtersearch'] = '';
       ptab['count'] = 0;
       ptab.updated$ = ptab.updated.asObservable();
-      ptab.db.sync(ptab.dbsync, this.dbsyncoptions);
+      ptab.db.sync(ptab.dbsync, this.dbsyncoptions).on('change',
+        (change) => {
+          // yo, something changed!
+          console.log("something changed", change);
+        }).on('paused', (info) => {
+          // replication was paused, usually because of a lost connection
+          console.log("replication paused", info);
+        }).on('active', (info) => {
+          // replication was resumed
+          console.log("replication resumed", info);
+        }).on('error', (err) => {
+          // totally unhandled error (shouldn't happen)
+          console.log("replication error", err);
+        }).on('complete', (info) => {
+          // replication was canceled!
+          console.log("replication was completed", info);
+        });
+
+      ptab.db.changes({
+        since: 'now'
+      }).on('change', (change) => {
+        // received a change
+        console.log("received a change", change);
+      }).on('error', (err) => {
+        // handle errors
+        console.log("received a error", err);
+      });
+
 
       if (ptab["indexes"]) {
         for (var idx in ptab["indexes"]) {

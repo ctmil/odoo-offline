@@ -29,6 +29,24 @@ export class TicketItemsComponent implements OnInit {
   }
 
   ngOnInit() {}
+
+
+  valueChanged(event) {
+    console.log("valueChange:", event);
+    this.newItem.product_name = event.doc.name;
+    if (this.newItem.product_qty == undefined) this.newItem.product_qty = 1;
+    this.newItem.product_unit_price = event.doc.lst_price;
+  }
+  myListFormatter(data: any): string {
+      console.log("data:", data);
+      return `(${data.id}) ${data.doc.default_code}-${data.doc.name}`;
+  }
+
+  myValueFormatter(data: any): string {
+      console.log("value data:", data);
+      return `${data.doc.default_code}`;
+  }
+
   editTicketItem( Item : TicketItem ) {
     console.log("editTicketItem", Item);
     this.editItem = Item;
@@ -82,7 +100,8 @@ export class TicketItemsComponent implements OnInit {
         console.log("result:", result, this);
         this["data"] = [];
         let docs = result.rows.map((row) => {
-        this.data.push(`(${row.id}) ${row.doc.default_code}-${row.doc.name}`);
+          row.value = row.doc;
+        this.data.push(row);
           //observer.onNext(this["data"]);
         });
         console.log("Data:",this.data);

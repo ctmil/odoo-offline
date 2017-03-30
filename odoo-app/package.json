@@ -40,6 +40,7 @@
     "ng2-auto-complete": "^0.10.9",
     "ng2-bootstrap": "^1.1.16-11",
     "ng2-config": "^1.1.2-final",
+    "ng2-datetime-picker": "^0.15.1",
     "ng2-pagination": "^2.0.0",
     "ngx-dropdown": "0.0.22",
     "node-odoo": "0.0.2",

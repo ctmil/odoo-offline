@@ -5,6 +5,7 @@ export class Tickets {
     id: string = '';
     date: Date;
     //amount: number = 0;
+    client_dni: string = '';
     client: string = '';
     seller: string = '';
     //complete: boolean = false;

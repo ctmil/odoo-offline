@@ -11,3 +11,38 @@ body { padding-top: 70px; }
 .col-number {
   text-align: right;
 }
+
+.spinner.hidden {
+    opacity: 0;
+}
+
+@keyframes spinner {
+	from {
+		transform:rotate(0deg)
+	}
+	to {
+		transform:rotate(359deg)
+	}
+}
+
+.spinner {
+    margin: 10px;
+    transition: opacity 0.5s;
+}
+.spinner, .spinner::after {
+    border-radius: 100%;
+}
+.spinner {
+    position: relative;
+    display: inline-block;
+    width: 1em;
+    height: 1em;
+    font-size: 32px;
+    border-bottom: 1px solid;
+    vertical-align: middle;
+    overflow: hidden;
+    text-indent: 100%;
+    -webkit-animation: 0.5s spinner linear infinite;
+    -moz-animation: 0.5s spinner linear infinite;
+    animation: 0.5s spinner linear infinite;
+}

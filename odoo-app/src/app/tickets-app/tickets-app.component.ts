@@ -86,6 +86,20 @@ export class TicketsAppComponent implements OnInit {
     return this.CxService.getTableAsArray('tickets')
   }
 
+  valueChanged(event) {
+    console.log("valueChange:", event);
+    this.newTicket.client = event.doc.name;
+  }
+  myListFormatter(data: any): string {
+      console.log("data:", data);
+      return `(${data.id}) ${data.doc.document_number} - ${data.doc.name} - ${data.doc.email}`;
+  }
+
+  myValueFormatter(data: any): string {
+      console.log("value data:", data);
+      return `${data.doc.document_number}`;
+  }
+
   misClientes(search : string) {
     console.log("misClientes search:", search);
 
@@ -114,12 +128,14 @@ export class TicketsAppComponent implements OnInit {
 
       console.log("subscriber", subscriber, this);
 
-      this.CxService.pdb["res.partner"]["db"].query("idx_document_number", { startkey: search_keyword, limit: 5, include_docs: true }).then((result) => {
+      this.CxService.pdb["res.partner"]["db"].query("idx_document_number",
+        { startkey: search_keyword, limit: 5, include_docs: true }).then((result) => {
         // handle result
         console.log("result:", result, this);
         this["data"] = [];
         let docs = result.rows.map((row) => {
-          this.data.push(`(${row.id}) ${row.doc.document_number} - ${row.doc.name} - ${row.doc.email}`);
+          row.value = row.doc;
+          this.data.push(row);
           //observer.onNext(this["data"]);
         });
         console.log("Data:",this.data);

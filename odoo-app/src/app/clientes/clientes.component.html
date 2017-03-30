@@ -35,8 +35,8 @@
 		                    <th class="actions">Acciones</th>
 		                 </tr>
 		            </thead>
-		            <tbody *ngIf="clientes.length > 0">
-                		<tr *ngFor="let client of clientes|paginate: { itemsPerPage: ipp, currentPage: p }">
+		            <tbody >
+                		<tr *ngFor="let client of asyncClientes| async | paginate: { itemsPerPage: ipp, currentPage: p, totalItems: total }">
 		                    <td *ngIf="client">{{client.id}}</td>
                 		    <td *ngIf="client">{{client.name}}</td>
 		                    <td *ngIf="client">{{client.phone}}</td>
@@ -58,8 +58,9 @@
 
 		    <div class="col-md-12">
 
-             <div *ngIf="clientes.length > 0">
-                  <pagination-controls (pageChange)="pageChanged($event)"></pagination-controls>
+             <div >
+                <div class="spinner" [ngClass]="{ 'hidden': !loading }"></div>
+                  <pagination-controls (pageChange)="getPage($event)"></pagination-controls>
               </div>
 
 		    </div>
