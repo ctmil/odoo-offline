@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef } from "@angular/core";
+import { Component, OnInit, ChangeDetectorRef, ChangeDetectionStrategy } from "@angular/core";
 import { FormControl, FormGroup } from '@angular/forms';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router, ActivatedRoute, Params } from '@angular/router';
@@ -22,13 +22,15 @@ import { Producto } from "../producto";
   selector: "tickets-app",
   templateUrl: "./tickets-app.component.html",
   styleUrls: ["./tickets-app.component.css"],
-  providers: [TicketsService]
+  providers: [TicketsService],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 
 
 export class TicketsAppComponent implements OnInit {
 
-  message = "Tickets"
+  message = "Tickets";
+  cx_productosDatabaseUpdated_sub: Subscription;
   newTicket: Tickets = new Tickets();
   action: string = "";
   subparam: Subscription;
@@ -36,6 +38,13 @@ export class TicketsAppComponent implements OnInit {
   data: any = [];
   deleting_item: boolean = false;
   deleting_ticket: any;
+  table_id: string = "tickets";
+
+  ipp: number = 5;
+  p: number;
+  total: number;
+  loading: boolean = false;
+  asyncTickets: Observable<Object[]>;
 
   constructor(
     private ticketsService: TicketsService,
@@ -178,7 +187,68 @@ export class TicketsAppComponent implements OnInit {
 
   }
 
+  getPage(event) {
+    console.log("getPage " + this.table_id, " from:", this["p"], " to:", event);
+    var page: number = event;
+    this.loading = true;
+    var mytable = this.CxService.pdb[this.table_id]['cache_records'];
+
+    var pi = Number(event);
+    var mykeys = [];
+    var mytable = this.CxService.pdb[this.table_id]['cache_records'];
+
+    this.asyncTickets = Observable.create((subscriber: Subscriber<{}>) => {
+      console.log("checking asyncTickets");
+      if (mytable) {
+
+        for (var i = (pi - 1) * this.ipp; i < pi * this.ipp; i++) {
+          if (mytable[i])
+            if (mytable[i].key)
+              mykeys.push(mytable[i].key);
+        }
+
+        console.log("mykeys:",mykeys);
+        this.CxService.getDocs(this.table_id,
+          { include_docs: true, keys: mykeys },
+          (table_id, result) => {
+            //console.log("bring page " + pi, result);
+            const start = (pi - 1) * this.ipp;
+            const end = start + this.ipp;
+
+            for (var i = 0; i < this.ipp; i++) {
+              var it = (pi - 1) * this.ipp + i;
+              if (mytable[it]) {
+                mytable[it] = new Tickets(result.rows[i].doc);
+                mytable[it].id = result.rows[i].id;
+                mytable[it].key = result.rows[i].key;
+              }
+            }
+            //console.log("bring page mytable now is:", mytable, mytable.length);
+            this["p"] = pi;
+            this.loading = false;
+            this.total = mytable.length;
+            this.message = "Tickets ("+this.total+")";
+            subscriber.next( mytable.slice(start, end) );
+          });
+      }
+    });
+
+    this.cd.markForCheck();
+    this.cd.detectChanges();
+
+  }
+
   ngOnInit() {
+
+      this.cx_productosDatabaseUpdated_sub = this.CxService.pdb[this.table_id].updated$.subscribe(
+      updated => {
+        console.log(`[ProductosComponent] Received updated: ${updated}`, this.CxService.pdb['tickets']);
+        //this.message = "Productos ("+this.total+")";
+        //console.log(`[ProductosComponent] Subscribed saved message: to ${lastmessage}`);
+        this.cd.markForCheck();
+        this.cd.detectChanges();
+        this.getPage(1);
+      });
 
     console.log("TicketsComponent > subparam", this.subparam);
     if (this.subparam == undefined) {
@@ -199,6 +269,8 @@ export class TicketsAppComponent implements OnInit {
               this.cd.detectChanges();
             }
           });
+        } else {
+          this.getPage(1);
         }
       });
 
@@ -231,7 +303,13 @@ export class TicketsAppComponent implements OnInit {
         console.log("this.route.params:", this.route.params, this.route.snapshot.params);
       }
 
-    } else this.action = "";
+    } else {
+      this.action = "";
+
+    }
   }
 
+  ngOnDestroy() {
+    this.cx_productosDatabaseUpdated_sub.unsubscribe();
+  }
 }

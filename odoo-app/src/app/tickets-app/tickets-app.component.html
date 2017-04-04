@@ -101,7 +101,7 @@
           </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let ticket of tickets">
+        <tr *ngFor="let ticket of asyncTickets | async | paginate: { itemsPerPage: ipp, currentPage: p, totalItems: total }">
           <td *ngIf="ticket">{{ticket.id}}</td>
           <td *ngIf="ticket">{{ticket.client}}</td>
           <td *ngIf="ticket">{{ticket.vendedor}}</td>
@@ -119,5 +119,13 @@
     </table>
   </div>
 
+  <div id="bottom" class="row">
+
+    <div class="col-md-12">
+            <div class="spinner" [ngClass]="{ 'hidden': !loading }"></div>
+            <pagination-controls (pageChange)="getPage($event)" ></pagination-controls>
+    </div>
+
+  </div> <!-- /#bottom -->
 </div>
 
