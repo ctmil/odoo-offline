@@ -34,6 +34,8 @@ export class TicketsAppComponent implements OnInit {
   subparam: Subscription;
   search_clientes: BehaviorSubject<Object[]>;
   data: any = [];
+  deleting_item: boolean = false;
+  deleting_ticket: any;
 
   constructor(
     private ticketsService: TicketsService,
@@ -62,22 +64,39 @@ export class TicketsAppComponent implements OnInit {
       this.cd.markForCheck();
       this.cd.detectChanges();
       console.log(this.newTicket);
-      this.newTicket = new Tickets();
+      //this.newTicket = new Tickets();
+      this.router.navigate(['/tickets']);
     });
 
 
-    //this.router.navigate(['/tickets']);
+
 
   }
+  deletingItem(id) {
+    this.deleting_item = true;
+    this.deleting_ticket = id;
+  }
+  deleteItem() {
+    this.removeTicketById(this.deleting_ticket);
+    this.deleting_item = false;
+  }
+  cancelDeleteItem() {
+    this.deleting_item = false;
+    this.deleting_ticket = undefined;
+  }
+  removeTicketById(id) {
 
-  removeTicket(ticket) {
-    this.ticketsService.deleteTicket(ticket, (res) => {
+    this.ticketsService.deleteTicketById(id, (res) => {
       this.cd.markForCheck();
       this.cd.detectChanges();
       console.log(res);
       //this.newTicket = new Tickets();
-      this.router.navigateByUrl("/tickets");
+      //this.router.navigateByUrl("/tickets");
+      this.message = "Ticket Eliminado";
     });
+  }
+  removeTicket(ticket) {
+    this.removeTicketById(ticket["_id"]);
   }
 
   get tickets() {
@@ -161,36 +180,45 @@ export class TicketsAppComponent implements OnInit {
 
   ngOnInit() {
 
-    this.subparam = this.route.params.subscribe( data => {
-      console.log("TicketsComponent > params subscribed!", data);
+    console.log("TicketsComponent > subparam", this.subparam);
+    if (this.subparam == undefined) {
+      this.subparam = this.route.params.subscribe(data => {
+        console.log("TicketsComponent > param data received!", data);
         var id = data["id"];
         if (id) {
           this.CxService.getDoc("tickets", id, (response) => {
             if ("error" in response) {
               console.log("Errors in edit:", response);
             } else {
-              console.log(this.action+" OK >>>", response);
-              this.newTicket = response;
+              console.log(this.action + " OK >>>", response);
+              this.newTicket = new Tickets(response);
               if (this.newTicket["items"] == undefined) {
                 this.newTicket.items = [];
               }
               this.cd.markForCheck();
               this.cd.detectChanges();
-             }
-          }  );
+            }
+          });
         }
-    });
+      });
 
+      console.log("TicketsComponent > route params subscribed!", this.subparam);
+    }
 /**this.route.params
     // (+) converts string 'id' to a number
     .switchMap((params: Params) => this.service.getHero(+params['id']))
     .subscribe((hero: Hero) => this.hero = hero); */
 
-    //console.log("route:", this.route, this.route.snapshot.data);
+    console.log("route:", this.route, this.route.snapshot.data);
     if ("action" in this.route.snapshot.data) {
       this.action = this.route.snapshot.data["action"];
       if (this.action == "new") {
         this.message = "Nuevo Ticket";
+      }
+
+      if (this.action == "view") {
+        this.message = "Viendo Ticket";
+        console.log("this.route.params:", this.route.params, this.route.snapshot.params);
       }
 
       if (this.action == "edit") {

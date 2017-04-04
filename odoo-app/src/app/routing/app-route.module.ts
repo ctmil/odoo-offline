@@ -20,6 +20,7 @@ const appRoutes: Routes = [
   { path: 'tickets', component: TicketsAppComponent, data: { title: 'Odoo-app Moldeo / Tickets' } },
   { path: 'tickets/new', component: TicketsAppComponent, data: { title: 'Odoo-app Moldeo / Nuevo Ticket', action: 'new' } },
   { path: 'tickets/edit/:id', component: TicketsAppComponent, data: { title: 'Odoo-app Moldeo / Editar Ticket', action: 'edit' } },
+  { path: 'tickets/view/:id', component: TicketsAppComponent, data: { title: 'Odoo-app Moldeo / Viendo Ticket', action: 'view' } },
   { path: 'tickets/delete/:id', component: TicketsAppComponent, data: { title: 'Odoo-app Moldeo / Borrar Ticket', action: 'delete' } },
   { path: 'about', component: AboutComponent, data: { title: 'Odoo-app Moldeo / Acerca' } },
   { path: '**', component: PageNotFoundComponent },

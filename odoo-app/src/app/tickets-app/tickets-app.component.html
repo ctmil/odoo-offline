@@ -1,3 +1,19 @@
+<div *ngIf="this.deleting_item" class="modal fade show in" id="delete-modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="modalLabel">Borrar Item</h4>
+            </div>
+            <div class="modal-body">¿Desea realmente borrar este item? {{this.deleting_ticket}} </div>
+              <div class="modal-footer">
+                  <button type="button" class="btn btn-primary" (click)="deleteItem();">Si</button>
+                  <button type="button" class="btn btn-default" data-dismiss="modal" (click)="cancelDeleteItem()">No</button>
+              </div>
+      </div>
+  </div>
+</div>
+
 
 <div id="top" class="row">
   <div class="col-md-6">
@@ -27,19 +43,20 @@
   </div>
   <div class="row">
     <div class="col-md-12">
-        <ticket-items [p_TicketItems]="newTicket.items" (notify)='onNotify($event)'></ticket-items>
+        <ticket-items [p_TicketItems]="newTicket.items" [p_action]="action" (notify)='onNotify($event)'></ticket-items>
     </div>
   </div>
-  <div class="row" *ngIf="newTicket.isValid()">
+  <div class="row" *ngIf="newTicket.isValid() || this.action=='delete'">
     <div class="col-md-9">
       </div>
-    <div class="col-md-3"><a routerLink="/" routerLinkActive="active" class="btn btn-warning pull-left">Cancelar</a>
-      <button *ngIf="this.action!='delete'" (click)="addTicket()"
+    <div class="col-md-3"><a routerLink="/tickets" routerLinkActive="active" class="btn btn-warning pull-right">Cancelar</a>
+      <button *ngIf="this.action=='edit' || this.action=='new'" (click)="addTicket()"
             class="btn btn-primary pull-right">Confirmar</button>
       <button *ngIf="this.action=='delete'" (click)="removeTicket(newTicket)"
             class="btn btn-warning pull-right">Borrar</button>
     </div>
   </div>
+
 </div>
 
 <div *ngIf="this.action==''" class="row">
@@ -83,18 +100,18 @@
             <th>Estado</th>
           </tr>
       </thead>
-      <tbody *ngIf="tickets.length > 0">
+      <tbody>
         <tr *ngFor="let ticket of tickets">
           <td *ngIf="ticket">{{ticket.id}}</td>
           <td *ngIf="ticket">{{ticket.client}}</td>
           <td *ngIf="ticket">{{ticket.vendedor}}</td>
-          <td *ngIf="ticket">{{ticket.items.length}}</td>
+          <td *ngIf="ticket && ticket.items">{{ticket.items.length}}</td>
           <td *ngIf="ticket">{{ticket.amount}} $</td>
           <td *ngIf="ticket">{{ticket.date | date:'fullDate' }}</td>
           <td  *ngIf="ticket" class="actions">
-              <a class="btn btn-success btn-xs" [routerLink]="['/tickets/edit', ticket._id]" >Ver</a>
-              <a class="btn btn-warning btn-xs" [routerLink]="['/tickets/edit', ticket._id]" >Editar</a>
-              <a class="btn btn-warning btn-xs" [routerLink]="['/tickets/delete', ticket._id]" >Borrar</a>
+              <a class="btn btn-success btn-xs" [routerLink]="['/tickets/view', ticket.id]" >Ver</a>
+              <a class="btn btn-success btn-xs" [routerLink]="['/tickets/edit', ticket.id]" >Editar</a>
+              <button class="btn btn-warning btn-xs" (click)="deletingItem(ticket.id);" >Borrar</button>
           </td>
           <td  *ngIf="ticket">Sincronizado <span align="right"><i class="fa fa-rss" aria-hidden="true"></i></span></td>
       </tr>
@@ -102,41 +119,5 @@
     </table>
   </div>
 
-</div> <!-- /#list -->
- <!--
-	     <div id="bottom" class="row">
-
-		    <div class="col-md-12">
-
-		        <ul class="pagination">
-		            <li class="disabled"><a>&lt; Anterior</a></li>
-		            <li class="disabled"><a>1</a></li>
-		            <li><a href="#">2</a></li>
-		            <li><a href="#">3</a></li>
-		            <li class="next"><a href="#" rel="next">Próximo &gt;</a></li>
-		        </ul>
-
-		    </div>
-
-	     </div>
-       -->
-              <!-- /.pagination -->
-       <!-- /#bottom -->
-
-		<!-- Modal -->
-<div class="modal fade" id="delete-modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="modalLabel">Borrar Item</h4>
-            </div>
-            <div class="modal-body">Desea realmente borrar este item? </div>
-              <div class="modal-footer">
-                  <button type="button" class="btn btn-primary">Si</button>
-                  <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
-              </div>
-      </div>
-  </div>
 </div>
 

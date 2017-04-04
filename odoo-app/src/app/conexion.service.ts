@@ -120,24 +120,38 @@ export class ConexionService {
         console.log("received a error", err);
       });
 
+      ptab.db.info().then((result) => {
+        console.log("Db Info:", result);
+      });
 
       if (ptab["indexes"]) {
         for (var idx in ptab["indexes"]) {
-          console.log("Adding index:", idx, ptab["indexes"][idx]);
+
+          console.log("Checking index:", idx );
+
           var field_name = ptab['indexes'][idx]["field"];
+
           ptab['indexes'][idx] = {
             _id: '_design/' + idx,
             views: {}
           }
+
           ptab['indexes'][idx].views[idx] = {
             map: "function(doc) { emit(doc."+field_name+"); }"
           }
-          ptab['db'].put(ptab['indexes'][idx]).then((result) => {
-            console.log("Added index " + idx,result);
-            return ptab['db'].query( idx, {stale: 'update_after'});
-          }).catch((error) => {
-            console.log("index already exist?", error);
-          })
+
+          ptab.db.get("_design/"+idx).then((result) => {
+            console.log("index already exists: ", result);
+          }).catch((err) => {
+            console.log("Create index: ", idx, err);
+
+            ptab.db.put(ptab['indexes'][idx]).then((result) => {
+              console.log("Added index " + idx, result);
+              return ptab.db.query(idx, { stale: 'update_after' });
+            }).catch((error) => {
+              console.log("index already exist?", error);
+            });
+          });
         }
       }
       /**/

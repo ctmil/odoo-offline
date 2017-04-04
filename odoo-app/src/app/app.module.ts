@@ -68,8 +68,6 @@ export function configFactory() {
     DropdownModule,
     ModalModule.forRoot(),
     BootstrapModalModule,
-    //Ng2UIModule,
-    //Ng2UtilsModule,
     Ng2AutoCompleteModule,
     Ng2DatetimePickerModule
 

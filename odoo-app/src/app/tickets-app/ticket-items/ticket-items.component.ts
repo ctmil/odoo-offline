@@ -19,10 +19,13 @@ import { ConexionService } from '../../conexion.service';
 export class TicketItemsComponent implements OnInit {
 
   @Input() p_TicketItems: TicketItems;
+  @Input() p_action: any;
 
   newItem: TicketItem = new TicketItem();
   editItem: TicketItem;
   data: any = [];
+  excel_line_adder: boolean = false;
+  addingitem : boolean = false;
 
   private _id: number = 0;
   constructor( private CxService: ConexionService) {
@@ -62,11 +65,25 @@ export class TicketItemsComponent implements OnInit {
     //this.p_TicketItems.filter(item => item.id == Item.id)[0] = Item;
     this.editItem = undefined;
   }
+  newTicketItem() {
+    console.log("newTicketItem");
+    this.newItem = new TicketItem();
+    this.addingitem = true;
+
+  }
+
+  hideAddItem() {
+    this.addingitem = false;
+  }
+
   addTicketItem( Item : TicketItem ) {
     console.log("addTicketItem", Item);
     Item.id = this._id++;
     this.p_TicketItems.push(Item);
-    this.newItem = new TicketItem();
+    if (this.excel_line_adder)
+      this.newItem = new TicketItem();
+    else
+      this.addingitem = false;
   }
   get items_total() {
     var _items_total : number = 0;
