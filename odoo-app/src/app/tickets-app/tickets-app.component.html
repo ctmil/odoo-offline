@@ -23,23 +23,37 @@
 
 <div *ngIf="this.action!=''">
   <div  class="row">
-    <div  class="form-inline">
-      <div class="form-group col-md-4">
-        <label for="cliente">Cliente</label>
-          <input class="form-control" ng2-auto-complete [source]="myClients.bind(this)"  placeholder="Cliente DNI" autofocus="" [(ngModel)]="newTicket.cliente_dni" [max-num-list]="5" [min-chars]="3" name="cliente_dni" (valueChanged)="valueChanged($event)" loading-text="Buscando por DNI..." display-property-name="key"  [list-formatter]="myListFormatter"/>
+    <form class="form-horizontal">
+    <!-- div  class="form-inline" -->
+
+      <div class="form-group col-xs-6">
+        <label for="cliente" class="control-label">Cliente</label>
+          <input class="form-control" 
+		id="cliente"
+		ng2-auto-complete [source]="myClients.bind(this)" 	
+		 placeholder="Cliente DNI" autofocus="" [(ngModel)]="newTicket.cliente_dni" 
+		[max-num-list]="10" [min-chars]="3" name="cliente_dni" (valueChanged)="valueChanged($event)" 
+		loading-text="Buscando por DNI..." display-property-name="key"  [list-formatter]="myListFormatter"/>
            <input placeholder="Cliente" class="form-control" [(ngModel)]="newTicket.client" name="cliente"/>
       </div>
-      <div class="form-group col-md-4">
-        <label for="amount">Vendedor</label>
+
+      <div class="form-group col-xs-3">
+        <label for="seller" class="control-label">Vendedor</label>
         <input class="form-control" placeholder="Vendedor"
+		id="seller" 
                 autofocus="" [(ngModel)]="newTicket.seller" (keyup.enter)="addTicket()" name="seller"/>
       </div>
-      <div class="form-group col-md-4">
-        <!-- label for="fecha">Fecha</label -->
-        <input class="form-control" placeholder="DD/MM/YYYY" autofocus=""
+
+      <div class="form-group col-xs-3">
+        <label for="fecha" class="control-label">Fecha</label>
+        <input class="form-control" 
+		id="fecha" 
+		placeholder="DD/MM/YYYY" autofocus=""
                 ng2-datetime-picker [(ngModel)]="newTicket.date" (keyup.enter)="addTicket()" name="fecha" required/>
       </div>
-    </div>
+
+    <!-- /div -->
+    </form>
   </div>
   <div class="row">
     <div class="col-md-12">
