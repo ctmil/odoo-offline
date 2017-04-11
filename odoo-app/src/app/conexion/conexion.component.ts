@@ -78,4 +78,20 @@ export class ConexionComponent implements OnInit, OnDestroy {
     this.CxService.cleanConexionData();
   }
 
+  generateConexionData() {
+	console.log('[DEBUG] generate conection data');
+	var PouchDB = require('pouchdb');
+	var db = new PouchDB('metodo.pago');
+	var doc = {
+	  "_id": "CASH",
+	  "name": "Efectivo",
+	};
+	db.put(doc);
+	var doc = {
+	  "_id": "CARD",
+	  "name": "Tarjeta de Credito",
+	};
+	db.put(doc);
+  }
+
 }

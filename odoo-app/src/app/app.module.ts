@@ -16,6 +16,7 @@ import { TicketItemsComponent } from './tickets-app/ticket-items/ticket-items.co
 import { ClientesComponent } from './clientes/clientes.component';
 import { ProductosComponent } from './productos/productos.component';
 import { ConexionComponent } from './conexion/conexion.component';
+import { MetodoPagoComponent } from './metodo_pago/metodo_pago.component';
 import { HomeComponent } from './home/home.component';
 import { AboutComponent } from './about/about.component';
 import { PageNotFoundComponent } from './not-found.component';
@@ -31,6 +32,7 @@ import { BootstrapModalModule } from 'angular2-modal/plugins/bootstrap';
 import { Ng2AutoCompleteModule } from 'ng2-auto-complete';
 import { ConfigModule, ConfigLoader, ConfigStaticLoader } from 'ng2-config';
 import { Ng2DatetimePickerModule } from 'ng2-datetime-picker';
+import { Ng2FilterPipeModule } from 'ng2-filter-pipe';
 
 export function configFactory() {
     return new ConfigStaticLoader('/config.json'); // PATH || API ENDPOINT
@@ -43,6 +45,7 @@ export function configFactory() {
     TicketsAppComponent,
     TicketItemsComponent,
     ClientesComponent,
+    MetodoPagoComponent,
     ProductosComponent,
     HomeComponent,
     AboutComponent,
@@ -69,7 +72,8 @@ export function configFactory() {
     ModalModule.forRoot(),
     BootstrapModalModule,
     Ng2AutoCompleteModule,
-    Ng2DatetimePickerModule
+    Ng2DatetimePickerModule,
+    Ng2FilterPipeModule
 
   ],
   providers: [

@@ -16,30 +16,29 @@ interface IServerResponse {
 
 import { ConexionService } from '../conexion.service'
 import { ConexionData } from '../conexion-data'
-import { Producto } from '../producto';
-import { ProductosService } from '../productos.service';
+import { MetodoPago } from '../metodo_pago';
+import { MetodoPagoService } from '../metodo_pago.service';
 
 @Component({
-  selector: 'app-productos',
-  templateUrl: './productos.component.html',
-  styleUrls: ['./productos.component.css'],
-  providers: [ProductosService],
+  selector: 'app-metodopago',
+  templateUrl: './metodo_pago.html',
+  styleUrls: ['./metodo_pago.css'],
+  providers: [MetodoPagoService],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ProductosComponent implements OnInit, OnDestroy {
+export class MetodoPagoComponent implements OnInit, OnDestroy {
 
-  message = "Productos (...)"
-  cx_productosDatabaseUpdated_sub: Subscription;
-  table_id: string = "product.product";
+  message = "Métodos Pago"
+  cx_metodo_pago_DatabaseUpdated_sub: Subscription;
+  table_id: string = "metodo.pago";
   table_filters: any = [];
-  table_fields: any = ['name','default_code','lst_price','qty_available'];
+  table_fields: any = ['id','name'];
   ipp: number = 5;
   p: number;
   total: number;
   loading: boolean = false;
-  asyncProductos: Observable<Object[]>;
-  Productos: any;
-  userFilter: any = {default_code : ''};
+  asyncMetodoPago: Observable<Object[]>;
+  MetodosPago: any;
 
   constructor(private CxService: ConexionService, private cd: ChangeDetectorRef) {
     /*
@@ -61,6 +60,7 @@ export class ProductosComponent implements OnInit, OnDestroy {
 
   getPage(event) {
     console.log("getPage " + this.table_id, " from:", this["p"], " to:", event);
+
     var page: number = event;
     this.loading = true;
     var mytable = this.CxService.pdb[this.table_id]['cache_records'];
@@ -69,8 +69,8 @@ export class ProductosComponent implements OnInit, OnDestroy {
     var mykeys = [];
     var mytable = this.CxService.pdb[this.table_id]['cache_records'];
 
-    this.asyncProductos = Observable.create((subscriber: Subscriber<{}>) => {
-      console.log("checking asyncProductos");
+    this.asyncMetodoPago = Observable.create((subscriber: Subscriber<{}>) => {
+      console.log("checking asyncMetodosPago");
       if (mytable) {
 
         for (var i = (pi - 1) * this.ipp; i < pi * this.ipp; i++) {
@@ -90,7 +90,7 @@ export class ProductosComponent implements OnInit, OnDestroy {
             for (var i = 0; i < this.ipp; i++) {
               var it = (pi - 1) * this.ipp + i;
               if (mytable[it]) {
-                mytable[it] = new Producto(result.rows[i].doc);
+                mytable[it] = new MetodoPago(result.rows[i].doc);
                 mytable[it].id = result.rows[i].id;
                 mytable[it].key = result.rows[i].key;
               }
@@ -99,7 +99,7 @@ export class ProductosComponent implements OnInit, OnDestroy {
             this["p"] = pi;
             this.loading = false;
             this.total = mytable.length;
-            this.message = "Productos ("+this.total+")";
+            this.message = "Metodos Pago ("+this.total+")";
             subscriber.next( mytable.slice(start, end) );
           });
       }
@@ -110,25 +110,27 @@ export class ProductosComponent implements OnInit, OnDestroy {
 
   }
 
+
   ngOnInit() {
 
-    this.cx_productosDatabaseUpdated_sub = this.CxService.pdb[this.table_id].updated$.subscribe(
+    this.cx_metodo_pago_DatabaseUpdated_sub = this.CxService.pdb[this.table_id].updated$.subscribe(
       updated => {
-        console.log(`[ProductosComponent] Received updated: ${updated}`, this.CxService.pdb['product.product']);
-        //this.message = "Productos ("+this.total+")";
+        console.log(`[MetodoPagoComponent] Received updated: ${updated}`, this.CxService.pdb['metodo.pago']);
+        //this.message = "MetodoPago ("+this.total+")";
         //console.log(`[ProductosComponent] Subscribed saved message: to ${lastmessage}`);
         this.cd.markForCheck();
         this.cd.detectChanges();
         this.getPage(1);
       });
-    console.log('DEBUG');
-    console.log(this.CxService.pdb['product.product']['cache_records']);
-    this.Productos = this.CxService.pdb['product.product']['cache_records'];
+    this.MetodosPago = this.CxService.pdb['metodo.pago']['cache_records'];
+    // console.log('[DEBUG]');
+    // console.log(this.MetodosPago);
+    this.getPage(1);
 
   }
 
   ngOnDestroy() {
-    this.cx_productosDatabaseUpdated_sub.unsubscribe();
+    this.cx_metodo_pago_DatabaseUpdated_sub.unsubscribe();
   }
 
 }

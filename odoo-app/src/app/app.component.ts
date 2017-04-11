@@ -40,6 +40,7 @@ export class AppComponent implements OnInit, OnDestroy {
   cx_connectedOk_sub: Subscription;
   cx_connectedServerString_sub: Subscription;
 
+  cx_metodo_pago_sub: Subscription;
   cx_product_product_sub: Subscription;
   cx_res_partner_sub: Subscription;
   cx_tickets_sub: Subscription;
@@ -167,6 +168,14 @@ export class AppComponent implements OnInit, OnDestroy {
       this.cx_res_partner_sub = this.CxService.pdb['res.partner'].updated$.subscribe(
       (res_partner_updated) => {
         console.log(`[AppComponent] Received updated: ${res_partner_updated}`);
+        //console.log(`[ProductosComponent] Subscribed saved message: to ${lastmessage}`);
+        this.cd.markForCheck();
+        this.cd.detectChanges();
+        });
+
+      this.cx_metodo_pago_sub = this.CxService.pdb['metodo.pago'].updated$.subscribe(
+      (metodo_pago_updated) => {
+        console.log(`[AppComponent] Received updated: ${metodo_pago_updated}`);
         //console.log(`[ProductosComponent] Subscribed saved message: to ${lastmessage}`);
         this.cd.markForCheck();
         this.cd.detectChanges();

@@ -17,6 +17,12 @@
               }
             }
         },
+	"metodo.pago": {
+            "key_name": [ "id", "name" ],
+            "dbname": "metodo.pago",
+            "dbsyncname": "metodo_pago",
+            "adapter": "websql"
+	},
         "product.product": {
             "key_name": [ "default_code", "name" ],
             "dbname": "product.product",

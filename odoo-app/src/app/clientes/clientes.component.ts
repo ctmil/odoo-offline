@@ -32,6 +32,8 @@ export class ClientesComponent implements OnInit,OnDestroy {
   total: number;
   loading: boolean = false;
   asyncClientes: Observable<Object[]>;
+  Clientes: any;
+  userFilter: any = {document_number : ''};
 
   constructor(private CxService: ConexionService, private cd: ChangeDetectorRef) {
     /*
@@ -114,6 +116,7 @@ console.log("getPage " + this.table_id, " from:", this["p"], " to:", event);
         this.cd.detectChanges();
         this.getPage(1);
       });
+    this.Clientes = this.CxService.pdb['res.partner']['cache_records'];
 
   }
 

@@ -5,6 +5,7 @@ import { ActivatedRoute } from '@angular/router';
 import { TicketsAppComponent } from '../tickets-app/tickets-app.component';
 import { ClientesComponent } from '../clientes/clientes.component';
 import { ProductosComponent } from '../productos/productos.component';
+import { MetodoPagoComponent } from '../metodo_pago/metodo_pago.component';
 import { ConexionComponent } from '../conexion/conexion.component';
 import { HomeComponent } from '../home/home.component';
 import { AboutComponent } from '../about/about.component';
@@ -17,6 +18,7 @@ const appRoutes: Routes = [
   { path: 'conexion', component: ConexionComponent, data: { title: 'Odoo-app Moldeo / Conexion' } },
   { path: 'clientes', component: ClientesComponent, data: { title: 'Odoo-app Moldeo / Clientes' } },
   { path: 'productos', component: ProductosComponent, data: { title: 'Odoo-app Moldeo / Productos' } },
+  { path: 'metodospago', component: MetodoPagoComponent, data: { title: 'Odoo-app Moldeo / Metodos Pago' } },
   { path: 'tickets', component: TicketsAppComponent, data: { title: 'Odoo-app Moldeo / Tickets' } },
   { path: 'tickets/new', component: TicketsAppComponent, data: { title: 'Odoo-app Moldeo / Nuevo Ticket', action: 'new' } },
   { path: 'tickets/edit/:id', component: TicketsAppComponent, data: { title: 'Odoo-app Moldeo / Editar Ticket', action: 'edit' } },
