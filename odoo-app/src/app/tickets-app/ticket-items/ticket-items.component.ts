@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output } from '@angular/core';
+import { Component, OnInit, Input, Output, ChangeDetectorRef } from '@angular/core';
 import { Subscription }   from 'rxjs/Subscription';
 import { Observable, Subscribable } from 'rxjs/Observable';
 import { Subscriber } from "rxjs/Subscriber";
@@ -28,7 +28,8 @@ export class TicketItemsComponent implements OnInit {
   addingitem : boolean = false;
 
   private _id: number = 0;
-  constructor( private CxService: ConexionService) {
+  constructor( private CxService: ConexionService,
+  private cd: ChangeDetectorRef) {
   }
 
   ngOnInit() {}
@@ -130,9 +131,9 @@ export class TicketItemsComponent implements OnInit {
           }
         }
         console.log("this.search_clientes:", this.search_clientes);*/
+        this.cd.markForCheck();
+        this.cd.detectChanges();
         return result.rows;
-        //this.cd.markForCheck();
-        //this.cd.detectChanges();
       }).catch(function(err) {
         console.log(err);
       });
