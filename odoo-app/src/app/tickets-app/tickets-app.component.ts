@@ -175,9 +175,12 @@ export class TicketsAppComponent implements OnInit {
           }
         }
         console.log("this.search_clientes:", this.search_clientes);*/
+        this.cd.markForCheck();
+        this.cd.detectChanges();
+
         return result.rows;
-        //this.cd.markForCheck();
-        //this.cd.detectChanges();
+
+
       }).catch(function(err) {
         console.log(err);
       });
