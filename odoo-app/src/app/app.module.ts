@@ -35,7 +35,7 @@ import { Ng2DatetimePickerModule } from 'ng2-datetime-picker';
 import { Ng2FilterPipeModule } from 'ng2-filter-pipe';
 
 export function configFactory() {
-    return new ConfigStaticLoader('./config.json'); // PATH || API ENDPOINT
+    return new ConfigStaticLoader('./assets/config.json'); // PATH || API ENDPOINT
 }
 
 @NgModule({
