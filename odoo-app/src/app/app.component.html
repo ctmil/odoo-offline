@@ -1,4 +1,7 @@
-<nav class="navbar navbar-inverse navbar-fixed-top">
+<div class="overlay" *ngIf="open_app">
+  <button type="button" name="button" id="open_tab" (click)="openTab()">Abrir App</button>
+</div>
+<nav class="navbar navbar-inverse navbar-fixed-top" *ngIf="!open_app">
   <div class="container-fluid">
     <div class="navbar-header">
       <button type="button" class="navbar-toggle collapsed" (click)="isCollapsed = !isCollapsed" aria-expanded="false" aria-controls="navbar">
@@ -41,7 +44,7 @@
     </div>
   </div>
 </nav>
-<div id="main" class="container">
+<div id="main" class="container" *ngIf="!open_app">
   <div [ngClass]="classMessage()" style="display: none">
       <strong>{{connectedServerString}}</strong>
   </div>

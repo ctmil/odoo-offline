@@ -69,6 +69,7 @@ export class AppComponent implements OnInit, OnDestroy {
   //  return Observable.throw(errMsg);
   //}
 
+  open_app:boolean = false; //Variable de control para Extension y App
 
   constructor(private CxService: ConexionService,
     private cd: ChangeDetectorRef,
@@ -193,8 +194,11 @@ export class AppComponent implements OnInit, OnDestroy {
       // subscribing to a observable returns a subscription object
       this.sub = this.timer.subscribe(t => this.tickerFunc(t));
 
-
-
+      if(window.innerWidth > 600){
+        this.open_app = false;
+      }else{
+        this.open_app = true;
+      }
   }
 
   toggleAutoSinc() {
@@ -235,12 +239,14 @@ export class AppComponent implements OnInit, OnDestroy {
       //console.log("AppComponent > this.CxService:", this.CxService);
   } // tickerFunc
 
+  //Funcion para abrir una nueva ventana y la App de la impresora al mismo tiempo
+  openTab(){
+    chrome.windows.create({'url': 'dist/index.html', 'type': 'popup', 'width':800, 'height':600}, function(window) {});
 
-
+    chrome.management.launchApp("eglgaepeaeiceopebhfnlmeffnladnmf", function(){
+      if(chrome.runtime.lastError) console.error(chrome.runtime.lastError);
+      else console.log("App launched");
+    });
+  }
 
 } // Class AppComponent
-
-
-
-
-
