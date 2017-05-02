@@ -58,6 +58,7 @@ export class ConexionService {
   Ox = new odooxmlrpc({});
 
   constructor( private lSS: LocalStorageService, private config : ConfigService ) {
+    if(window.innerWidth > 600){
 
     console.log("ConexionService > constructor!",
       this.config.getSettings(),
@@ -172,6 +173,7 @@ export class ConexionService {
     this.Conectar(this.ConnData);
     console.log("ConexionService > constructor end!", this);
     window["Cx"] = this;
+    }
   }
 
   getInfo(table_id: string, callback?:any) {
@@ -864,5 +866,4 @@ saveProducto(producto: any) {
         req.write(json);
         req.end();
 */
-
 }

@@ -77,13 +77,20 @@ export class AppComponent implements OnInit, OnDestroy {
     vcRef: ViewContainerRef,
     public modal: Modal,
     private http: Http) {
+
+    if(window.innerWidth > 600){
+      this.open_app = false;
+
+      overlay.defaultViewContainer = vcRef;
+      console.log('reading json config file');
+
+      this.http.get('odoo-offline.json')
+        .map(function() { console.log('Success'); });
+    }else{
+      this.open_app = true;
+    }
     //Dlg.alert("YEAH");
 
-    overlay.defaultViewContainer = vcRef;
-    console.log('reading json config file');
-
-    this.http.get('odoo-offline.json')
-      .map(function() { console.log('Success'); });
       //.catch(function() {console.log('Error reading json');});
 
     /*this.modal.confirm()
@@ -139,7 +146,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-
+    if(window.innerWidth > 600){
     console.log('[AppComponent] Subscribing...connectedOk$');
 
     this.cx_connectedOk_sub = this.CxService.connectedOk$.subscribe(
@@ -193,12 +200,7 @@ export class AppComponent implements OnInit, OnDestroy {
       this.timer = Observable.timer(15000,15000);
       // subscribing to a observable returns a subscription object
       this.sub = this.timer.subscribe(t => this.tickerFunc(t));
-
-      if(window.innerWidth > 600){
-        this.open_app = false;
-      }else{
-        this.open_app = true;
-      }
+    }
   }
 
   toggleAutoSinc() {
@@ -239,11 +241,11 @@ export class AppComponent implements OnInit, OnDestroy {
       //console.log("AppComponent > this.CxService:", this.CxService);
   } // tickerFunc
 
-  //Funcion para abrir una nueva ventana y la App de la impresora al mismo tiempo
+  //[CHROME-EXTENSION] Funcion para abrir una nueva ventana y la App de la impresora al mismo tiempo
   openTab(){
     chrome.windows.create({'url': 'dist/index.html', 'type': 'popup', 'width':800, 'height':600}, function(window) {});
 
-    chrome.management.launchApp("eglgaepeaeiceopebhfnlmeffnladnmf", function(){
+    chrome.management.launchApp("oconkafegdbdklinbhkoopgbjnbgndap", function(){
       if(chrome.runtime.lastError) console.error(chrome.runtime.lastError);
       else console.log("App launched");
     });
